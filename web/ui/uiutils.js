@@ -23,7 +23,7 @@ UIUtils.showSpinningWheel = function() {
   
   if ($(".spinning-wheel").length == 0) {
     this._spinnerTimer = setTimeout(function() {
-      $("body").append("<img src='../imgs/ajax-loader.gif' class='spinning-wheel'></img>");
+      $("body").append("<div class='spinning-wheel'></div>");
     }, 2000);
   }
 }

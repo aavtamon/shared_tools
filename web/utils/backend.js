@@ -402,8 +402,6 @@ Backend.CacheChangeEvent.TYPE_UPDATED_FINISHED = "update_finished";
 
 Backend.addCacheChangeListener = function(listener) {
   Backend.Cache.addCacheChangeListener(listener);
-  
-  Backend.startPullingEvents();
 }
 
 Backend.removeCacheChangeListener = function(listener) {

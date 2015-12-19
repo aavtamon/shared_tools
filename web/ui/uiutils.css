@@ -459,6 +459,7 @@ select {
 
 
 .spinning-wheel {
+  display: inline-block;
   position: fixed;
   left: calc(50% - 15px);
   top: calc(50% - 15px);
@@ -467,6 +468,10 @@ select {
   
   width: 30px;
   height: 30px;
+  
+  background-image: url(../imgs/ajax-loader.gif);
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .popup-message {
