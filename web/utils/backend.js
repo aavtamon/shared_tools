@@ -314,6 +314,10 @@ Backend._pullUserData = function(transactionCallback) {
 
 // EVENT MANAGEMENT
 
+Backend.Events = {
+  _pulling: null
+};
+
 Backend.startPullingEvents = function(pullTimeout, recoveryTimeout, eventHandler) {
   if (Backend.Events._pulling) {
     return;
@@ -442,6 +446,8 @@ Backend.Cache.removeCacheChangeListener = function(listener) {
 Backend.Cache.markObjectInUpdate = function(objectType, objectId, isInUpdate) {
   if (this.cachedObjects[objectType] == null) {
     this.cachedObjects[objectType] = {};
+  }
+  if (this.cachedObjects[objectType].updateList == null) {
     this.cachedObjects[objectType].updateList = [];
   }
   
@@ -455,7 +461,7 @@ Backend.Cache.markObjectInUpdate = function(objectType, objectId, isInUpdate) {
   
   this._fireUpdateEvent();
 }
-Backend.Cache.isObjectInUpdate = function(objectTypem objectId) {
+Backend.Cache.isObjectInUpdate = function(objectType, objectId) {
   if (this.cachedObjects[objectType] == null) {
     return false;
   }
@@ -465,15 +471,18 @@ Backend.Cache.isObjectInUpdate = function(objectTypem objectId) {
 Backend.Cache.setObject = function(objectType, objectId, object) {
   if (this.cachedObjects[objectType] == null) {
     this.cachedObjects[objectType] = {};
+  }
+  if (this.cachedObjects[objectType].objects == null) {
     this.cachedObjects[objectType].objects = {};
   }
+  
   this.cachedObjects[objectType].objects[objectId] = object;
   this._notifyCacheListeners(objectType, objectId);
   
   this.markObjectInUpdate(objectType, objectId, false);
 }
 Backend.Cache.getObject = function(objectType, objectId) {
-  if (this.cachedObjects[objectType] == null) {
+  if (this.cachedObjects[objectType] == null || this.cachedObjects[objectType].objects == null) {
     return null;
   }
   
@@ -483,7 +492,7 @@ Backend.Cache.getObject = function(objectType, objectId) {
 Backend.Cache.isInUpdate = function() {
   var types = Object.keys(this.cachedObjects);
   for (var type in types) {
-    if (this.cachedObjects[objectType].updateList.length != 0) {
+    if (this.cachedObjects[types[type]].updateList != null && this.cachedObjects[types[type]].updateList.length != 0) {
       return true;
     }
   }
