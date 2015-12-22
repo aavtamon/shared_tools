@@ -152,6 +152,10 @@ UIUtils.hideDialog = function() {
 }
 
 UIUtils.appendDialog = function(root, dialogId, isModal) {
+  if (root == null) {
+    root = document.getElementsByTagName("body")[0];
+  }
+  
   var fullId = UIUtils.createId(root, dialogId);
   UIUtils.get$(fullId).remove();
   UIUtils.hideDialog();
@@ -356,80 +360,83 @@ UIUtils.createTextArea = function(textAreaId, rows, defaultText) {
   return textAreaElement;
 }
 
-UIUtils.createDropList = function(listId, items) {
-  var listElement = document.createElement("select");
-  listElement.setAttribute("id", listId);
-//  listElement.style.width = "100%";
-  
-  for (var index in items) {
-    var optionElement = document.createElement("option");
+//UIUtils.createDropList = function(listId, items) {
+//  var listElement = document.createElement("select");
+//  listElement.setAttribute("id", listId);
+//  
+//  for (var index in items) {
+//    var optionElement = document.createElement("option");
+//
+//    var item = items[index];
+//    optionElement.item = item;
+//    
+//    if (typeof item == "object") {
+//      if (item.element != null) {
+//        optionElement.appendChild(item.element);
+//      } else if (item.display != null) {
+//        optionElement.innerHTML = item.display;
+//      } else {
+//        optionElement.innerHTML = item.data;
+//      }
+//    } else {
+//      optionElement.innerHTML = item;
+//    }
+//    listElement.appendChild(optionElement);
+//  }
+//  
+//  listElement.getSelectedItem = function() {
+//    return listElement.options[listElement.selectedIndex].item;
+//  }
+//  
+//  listElement.getSelectedDisplay = function() {
+//    return this.getSelectedItem().display;
+//  }
+//  
+//  listElement.getSelectedData = function() {
+//    return this.getSelectedItem().data;
+//  }
+//  
+//  listElement.getValue = function() {
+//    return this.getSelectedData();
+//  }
+//  
+//  listElement.selectData = function(itemData) {
+//    for (var index = 0; index < listElement.options.length; index++) {
+//      if (listElement.options[index].item.data == itemData) {
+//        listElement.selectedIndex = index;
+//        break;
+//      }
+//    }
+//  }
+//  
+//  listElement.selectDisplay = function(itemDisplay) {
+//    for (var index = 0; index < listElement.options.length; index++) {
+//      if (listElement.options[index].item.display == itemDisplay) {
+//        listElement.selectedIndex = index;
+//        break;
+//      }
+//    }
+//  }
+//  
+//  listElement.setValue = function(value) {
+//    return this.selectData(value);
+//  }
+//  
+//  listElement.setChangeListener = function(listener) {
+//    if (listener != null) {
+//      this.onchange = function() {
+//        listener(this.getSelectedItem());
+//      }.bind(this);
+//    } else {
+//      this.onchange = null;
+//    }
+//  }
+//  
+//  return listElement;
+//}
 
-    var item = items[index];
-    optionElement.item = item;
-    
-    if (typeof item == "object") {
-      if (item.element != null) {
-        optionElement.appendChild(item.element);
-      } else if (item.display != null) {
-        optionElement.innerHTML = item.display;
-      } else {
-        optionElement.innerHTML = item.data;
-      }
-    } else {
-      optionElement.innerHTML = item;
-    }
-    listElement.appendChild(optionElement);
-  }
-  
-  listElement.getSelectedItem = function() {
-    return listElement.options[listElement.selectedIndex].item;
-  }
-  
-  listElement.getSelectedDisplay = function() {
-    return this.getSelectedItem().display;
-  }
-  
-  listElement.getSelectedData = function() {
-    return this.getSelectedItem().data;
-  }
-  
-  listElement.getValue = function() {
-    return this.getSelectedData();
-  }
-  
-  listElement.selectData = function(itemData) {
-    for (var index = 0; index < listElement.options.length; index++) {
-      if (listElement.options[index].item.data == itemData) {
-        listElement.selectedIndex = index;
-        break;
-      }
-    }
-  }
-  
-  listElement.selectDisplay = function(itemDisplay) {
-    for (var index = 0; index < listElement.options.length; index++) {
-      if (listElement.options[index].item.display == itemDisplay) {
-        listElement.selectedIndex = index;
-        break;
-      }
-    }
-  }
-  
-  listElement.setValue = function(value) {
-    return this.selectData(value);
-  }
-  
-  listElement.setChangeListener = function(listener) {
-    if (listener != null) {
-      this.onchange = function() {
-        listener(this.getSelectedItem());
-      }.bind(this);
-    } else {
-      this.onchange = null;
-    }
-  }
-  
-  return listElement;
+UIUtils.createDropList = function(listId, items) {
+  return UIUtils.createMultiOptionList(listId, items, true);
 }
 
 UIUtils.appendDropList = function(root, listId, items) {
@@ -663,8 +670,10 @@ UIUtils.createMultiOptionList = function(listId, choices, exclusive) {
     itemElement.setAttribute("class", "multichoicelist-dropdown-item notselectable");
     var checkbox = UIUtils.appendCheckbox(itemElement, listId + "-" + index + "-cb", choice.display, exclusive);
     checkbox.style.width = "20px";
-    checkbox.getLabel().style.width = "calc(100% - 45px)";
-    checkbox.getLabel().style.color = "inherit";
+    if (checkbox.getLabel != null) {
+      checkbox.getLabel().style.width = "calc(100% - 45px)";
+      checkbox.getLabel().style.color = "inherit";
+    }
     
     
     checkbox.setAttribute("name", listId);
