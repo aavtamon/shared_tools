@@ -194,6 +194,12 @@ ValidationUtils.isValidPassword = function(password) {
   return password != null && password.length >= 5;
 }
 
+ValidationUtils.isValidDollarAmount = function(amount) {
+  var amountExpression = /^\d+(?:\.\d{0,2})$/;
+  return amountExpression.test(amount);
+}
+
+
 
 FileUtils = {};
 FileUtils.IMAGE_FILE_TYPE = "image";
