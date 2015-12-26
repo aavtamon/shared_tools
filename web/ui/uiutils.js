@@ -905,7 +905,7 @@ UIUtils.appendAttachmentBar = function(root, barId, attachments, editable, openF
     }
     
     if (FileUtils.isImage(attachment)) {
-      thumbnail.style.backgroundImage = "url(" + attachment.data + ")";
+      thumbnail.style.backgroundImage = "url(" + (attachment.url != null ? attachment.url : attachment.data) + ")";
 
       UIUtils.setClickListener(thumbnail, openPreview.bind(this, attachment));
     } else if (FileUtils.isVideo(attachment)) {
