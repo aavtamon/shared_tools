@@ -91,21 +91,21 @@ UIUtils.hideMessage = function() {
 //    alignment: "left" | "right"
 //  }
 // }
-UIUtils.showDialog = function(title, contentDefinition, buttons) {
+UIUtils.showDialog = function(dialogId, title, contentDefinition, buttons) {
   UIUtils.hideDialog();
   
   var root = document.getElementsByTagName("body")[0];
   
-  var dialogElement = UIUtils.appendBlock(root, "ModalDialog");
+  var dialogElement = UIUtils.appendBlock(root, dialogId);
   UIUtils.addClass(dialogElement, "modal-dialog");
   
-  var dialogTitle = UIUtils.appendBlock(dialogElement, "DialogTitle");
+  var dialogTitle = UIUtils.appendBlock(dialogElement, "Title");
   UIUtils.addClass(dialogTitle, "modal-dialog-title");
   dialogTitle.innerHTML = title;
   
   UIUtils.appendSeparator(dialogElement);
   
-  var dialogContent = UIUtils.appendBlock(dialogElement, "DialogContent");
+  var dialogContent = UIUtils.appendBlock(dialogElement, "ContentPanel");
   UIUtils.addClass(dialogContent, "modal-dialog-content");
   
   if (typeof contentDefinition == "string") {
@@ -133,8 +133,9 @@ UIUtils.showDialog = function(title, contentDefinition, buttons) {
       UIUtils.setClickListener(button, function(listener) {
         if (listener) {
           listener();
+        } else {
+          dialogElement.close();
         }
-        UIUtils.hideDialog();
       }.bind(this, buttonProperties.listener));
     }
   } else {
@@ -142,33 +143,38 @@ UIUtils.showDialog = function(title, contentDefinition, buttons) {
     UIUtils.addClass(okButton, "modal-dialog-rightbutton");
     UIUtils.setClickListener(okButton, UIUtils.hideDialog);
   }
-  
 
   UIUtils.listenOutsideClicks(dialogElement, UIUtils.fadeOut.bind(this, dialogElement));
+  
+  dialogElement.close = function() {
+    UIUtils.fadeOut(dialogElement);
+  }
+  
+  return dialogElement;
 }
 
 UIUtils.hideDialog = function() {
   $(".modal-dialog").remove();
 }
 
-UIUtils.appendDialog = function(root, dialogId, isModal) {
-  if (root == null) {
-    root = document.getElementsByTagName("body")[0];
-  }
-  
-  var fullId = UIUtils.createId(root, dialogId);
-  UIUtils.get$(fullId).remove();
-  UIUtils.hideDialog();
-  
-  var dialog = UIUtils.appendBlock(root, dialogId);
-  if (isModal) {
-    UIUtils.addClass(dialog, "modal-dialog");
-  }
-  
-  UIUtils.listenOutsideClicks(dialog, UIUtils.fadeOut.bind(this, dialog));
-  
-  return dialog;
-}
+//UIUtils.appendDialog = function(root, dialogId, isModal) {
+//  if (root == null) {
+//    root = document.getElementsByTagName("body")[0];
+//  }
+//  
+//  var fullId = UIUtils.createId(root, dialogId);
+//  UIUtils.get$(fullId).remove();
+//  UIUtils.hideDialog();
+//  
+//  var dialog = UIUtils.appendBlock(root, dialogId);
+//  if (isModal) {
+//    UIUtils.addClass(dialog, "modal-dialog");
+//  }
+//  
+//  UIUtils.listenOutsideClicks(dialog, UIUtils.fadeOut.bind(this, dialog));
+//  
+//  return dialog;
+//}
 
 
 UIUtils.fadeOut = function(element, speed, listener) {
