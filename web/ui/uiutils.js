@@ -157,25 +157,6 @@ UIUtils.hideDialog = function() {
   $(".modal-dialog").remove();
 }
 
-//UIUtils.appendDialog = function(root, dialogId, isModal) {
-//  if (root == null) {
-//    root = document.getElementsByTagName("body")[0];
-//  }
-//  
-//  var fullId = UIUtils.createId(root, dialogId);
-//  UIUtils.get$(fullId).remove();
-//  UIUtils.hideDialog();
-//  
-//  var dialog = UIUtils.appendBlock(root, dialogId);
-//  if (isModal) {
-//    UIUtils.addClass(dialog, "modal-dialog");
-//  }
-//  
-//  UIUtils.listenOutsideClicks(dialog, UIUtils.fadeOut.bind(this, dialog));
-//  
-//  return dialog;
-//}
-
 
 UIUtils.fadeOut = function(element, speed, listener) {
   var el = UIUtils.get$(element);
