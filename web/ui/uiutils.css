@@ -510,14 +510,21 @@ select {
 .popup-message .popup-message-text {
 }
 
-.modal-dialog {
+.modal-dialog-area {
   position: fixed;
-  left: 20%;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  
+  text-align: center;
+}
+.modal-dialog {
+  position: relative;
+  display: inline-block;
   top: 100px;
   width: 60%;
-/*  max-height: calc(100% - 200px);*/
-  
-/*  z-index: 100;*/
+  text-align: left;
   
   padding: 5px;
   

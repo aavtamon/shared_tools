@@ -96,7 +96,11 @@ UIUtils.showDialog = function(dialogId, title, contentDefinition, buttons) {
   
   var root = document.getElementsByTagName("body")[0];
   
-  var dialogElement = UIUtils.appendBlock(root, dialogId);
+  var modalArea = UIUtils.appendBlock(root, "ModalArea-" + dialogId);
+  UIUtils.addClass(modalArea, "modal-dialog-area");
+
+  var dialogElement = UIUtils.createBlock(dialogId);
+  modalArea.appendChild(dialogElement);
   UIUtils.addClass(dialogElement, "modal-dialog");
   
   var dialogTitle = UIUtils.appendBlock(dialogElement, "Title");
@@ -144,23 +148,23 @@ UIUtils.showDialog = function(dialogId, title, contentDefinition, buttons) {
     UIUtils.setClickListener(okButton, UIUtils.hideDialog);
   }
 
-  UIUtils.listenOutsideClicks(dialogElement, UIUtils.fadeOut.bind(this, dialogElement));
+  UIUtils.listenOutsideClicks(dialogElement, UIUtils.fadeOut.bind(this, modalArea));
   
   dialogElement.close = function() {
-    UIUtils.fadeOut(dialogElement);
+    UIUtils.fadeOut(modalArea);
   }
   
   return dialogElement;
 }
 
 UIUtils.hideDialog = function() {
-  $(".modal-dialog").remove();
+  $(".modal-dialog-area").remove();
 }
 
 
 UIUtils.fadeOut = function(element, speed, listener) {
   var el = UIUtils.get$(element);
-  el.fadeOut(speed || "slow", function() {
+  el.fadeOut(speed || "normal", function() {
     el.remove();
     if (listener) {
       listener();
