@@ -1122,6 +1122,10 @@ UIUtils.emptyContainer = function(container) {
   }
 }
 
+UIUtils.remove = function(element) {
+  UIUtils.get$(element).remove();
+}
+
 UIUtils.setClickListener = function(element, listener) {
   UIUtils.get$(element).click(listener);
 }
