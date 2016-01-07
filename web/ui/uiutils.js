@@ -293,8 +293,10 @@ UIUtils.appendPasswordInput = function(root, inputFieldId) {
   return root.appendChild(UIUtils.createPasswordInput(UIUtils.createId(root, inputFieldId)));
 }
 
-UIUtils.createDateInput = function(inputFieldId, currentDate) {
-  var dateElement = UIUtils._createInputField(inputFieldId, "date");
+UIUtils.appendDateInput = function(root, inputFieldId) {
+  var dateElement = UIUtils._createInputField(inputFieldId, "text");
+  root.appendChild(dateElement);
+  UIUtils.get$(dateElement).datepicker();
   
   dateElement.setDate = function(date) {
     var value = date.getFullYear() + "-"
@@ -319,9 +321,6 @@ UIUtils.createDateInput = function(inputFieldId, currentDate) {
   }
   
   return dateElement;
-}
-UIUtils.appendDateInput = function(root, inputFieldId) {
-  return root.appendChild(UIUtils.createDateInput(UIUtils.createId(root, inputFieldId)));
 }
 
 
