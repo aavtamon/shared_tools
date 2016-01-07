@@ -99,8 +99,8 @@ UIUtils.showDialog = function(dialogId, title, contentDefinition, buttons) {
   var modalArea = UIUtils.appendBlock(root, "ModalArea-" + dialogId);
   UIUtils.addClass(modalArea, "modal-dialog-area");
 
-  var dialogElement = UIUtils.createBlock(dialogId);
-  modalArea.appendChild(dialogElement);
+  var dialogElement = UIUtils.appendBlock(modalArea, dialogId);
+  dialogElement.setAttribute("id", dialogId);
   UIUtils.addClass(dialogElement, "modal-dialog");
   
   var dialogTitle = UIUtils.appendBlock(dialogElement, "Title");
@@ -174,99 +174,69 @@ UIUtils.fadeOut = function(element, speed, listener) {
 
 
 
+//
+//UIUtils.createLabeledTextInput = function(inputFieldId, labelText, margin) {
+//  return UIUtils._createLabeledCombo(inputFieldId, labelText, UIUtils.createTextInput(inputFieldId), margin);
+//}
+//
+//UIUtils.createLabeledPasswordInput = function(inputFieldId, labelText, margin) {
+//  return UIUtils._createLabeledCombo(inputFieldId, labelText, UIUtils.createPasswordInput(inputFieldId), margin);
+//}
+//
+//UIUtils.createLabeledDropList = function(dropListId, labelText, options, margin) {
+//  return UIUtils.createLabeledSingleChoiceList(dropListId, labelText, options, margin);
+//}
+//
+//UIUtils.createLabeledMultiChoiceList = function(listId, labelText, options, margin) {
+//  return UIUtils._createLabeledCombo(listId, labelText, UIUtils.createMultiOptionList(listId, options, false), margin);
+//}
+//
+//UIUtils.createLabeledSingleChoiceList = function(listId, labelText, options, margin) {
+//  return UIUtils._createLabeledCombo(listId, labelText, UIUtils.createMultiOptionList(listId, options, true), margin);
+//}
+//
 
-UIUtils.createLabeledTextInput = function(inputFieldId, labelText, margin) {
-  return UIUtils._createLabeledCombo(inputFieldId, labelText, UIUtils.createTextInput(inputFieldId), margin);
+UIUtils.appendElement = function(root, type, id) {
+  var el = document.createElement(type);
+  root.appendChild(el);
+  if (id != null) {
+    el.setAttribute("id", UIUtils._createId(root, id));
+  }
+  
+  return el;
 }
 
-UIUtils.createLabeledPasswordInput = function(inputFieldId, labelText, margin) {
-  return UIUtils._createLabeledCombo(inputFieldId, labelText, UIUtils.createPasswordInput(inputFieldId), margin);
-}
 
-UIUtils.createLabeledDropList = function(dropListId, labelText, options, margin) {
-  //return UIUtils._createLabeledCombo(dropListId, labelText, UIUtils.createDropList(dropListId, options), margin);
-  return UIUtils.createLabeledSingleChoiceList(dropListId, labelText, options, margin);
-}
+UIUtils.appendLabel = function(root, labelId, text) {
+  var labelElement = UIUtils.appendElement(root, "label", labelId);
 
-UIUtils.createLabeledMultiChoiceList = function(listId, labelText, options, margin) {
-  return UIUtils._createLabeledCombo(listId, labelText, UIUtils.createMultiOptionList(listId, options, false), margin);
-}
-
-UIUtils.createLabeledSingleChoiceList = function(listId, labelText, options, margin) {
-  return UIUtils._createLabeledCombo(listId, labelText, UIUtils.createMultiOptionList(listId, options, true), margin);
-}
-
-
-UIUtils.createLabel = function(labelId, labelText) {
-  var labelElement = document.createElement("label");
-  labelElement.setAttribute("id", labelId);
-  //labelElement.style.display = "block";
-  if (labelText != null) {
-    labelElement.innerHTML = labelText;
+  if (text != null) {
+    labelElement.innerHTML = text;
   }
   
   return labelElement;
 }
 
-UIUtils.appendLabel = function(root, labelId, text) {
-  return root.appendChild(UIUtils.createLabel(UIUtils.createId(root, labelId), text));
-}
 
-
-UIUtils.createButton = function(buttonId, text) {
-  var buttonElement = document.createElement("button");
-  buttonElement.setAttribute("id", buttonId);
-  buttonElement.style.whiteSpace = "nowrap";
-  buttonElement.style.overflow = "hidden";
+UIUtils.appendButton = function(root, buttonId, text, isCriticalAction) {
+  var buttonElement = UIUtils.appendElement(root, "button", buttonId);
   
   buttonElement.innerHTML = text;
   
+  if (isCriticalAction) {
+    UIUtils.addClass(buttonElement, "critical-action-button");
+  }
+
   return buttonElement;
 }
 
-UIUtils.appendButton = function(root, buttonId, text, isCriticalAction) {
-  var button = root.appendChild(UIUtils.createButton(UIUtils.createId(root, buttonId), text));
-  
-  if (isCriticalAction) {
-    UIUtils.addClass(button, "critical-action-button");
-  }
-
-  return button;
-}
-
-
-
-UIUtils.createElement = function(type, elementId) {
-  var el = document.createElement(type);
-  if (elementId != null) {
-    el.setAttribute("id", elementId);
-  }
-  
-  return el;
-}
-UIUtils.appendElement = function(root, type, id) {
-  return root.appendChild(UIUtils.createElement(type, UIUtils.createId(root, id)));
-}
-
-
-UIUtils.createBlock = function(blockId) {
-  var blockElement = document.createElement("div");
-  if (blockId != null) {
-    blockElement.setAttribute("id", blockId);
-  }
-  
-  return blockElement;
-}
-
 UIUtils.appendBlock = function(root, blockId) {
-  return root.appendChild(UIUtils.createBlock(UIUtils.createId(root, blockId)));
+  return UIUtils.appendElement(root, "div", blockId);
 }
 
-UIUtils.createSpan = function(width, margin, blockId) {
-  var blockElement = document.createElement("span");
-  if (blockId != null) {
-    blockElement.setAttribute("id", blockId);
-  }
+UIUtils.appendSpan = function(root, width, margin, blockId) {
+  var blockElement = UIUtils.appendElement(root, "span", blockId);
+
   if (width != null) {
     blockElement.style.width = width;
   }
@@ -279,32 +249,26 @@ UIUtils.createSpan = function(width, margin, blockId) {
 }
 
 
-UIUtils.createTextInput = function(inputFieldId) {
-  return UIUtils._createInputField(inputFieldId, "text");
-}
 UIUtils.appendTextInput = function(root, inputFieldId) {
-  return root.appendChild(UIUtils.createTextInput(UIUtils.createId(root, inputFieldId)));
+  return UIUtils._appendInputField(root, inputFieldId, "text");
 }
 
-UIUtils.createPasswordInput = function(inputFieldId) {
-  return UIUtils._createInputField(inputFieldId, "password");
-}
 UIUtils.appendPasswordInput = function(root, inputFieldId) {
-  return root.appendChild(UIUtils.createPasswordInput(UIUtils.createId(root, inputFieldId)));
+  return UIUtils._appendInputField(root, inputFieldId, "password");
 }
 
 UIUtils.appendDateInput = function(root, inputFieldId) {
-  var dateElement = UIUtils._createInputField(inputFieldId, "text");
+  var dateElement = UIUtils._appendInputField(root, inputFieldId, "text");
   root.appendChild(dateElement);
   UIUtils.get$(dateElement).datepicker();
   
   dateElement.setDate = function(date) {
-    var value = date.getFullYear() + "-"
-                + (date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1))
-                + "-"
-                + (date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
+//    var value = date.getFullYear() + "-"
+//                + (date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1))
+//                + "-"
+//                + (date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
     
-    dateElement.value = value;
+    dateElement.value = date.toDateString();
   }
   
   dateElement.getDate = function() {
@@ -312,17 +276,17 @@ UIUtils.appendDateInput = function(root, inputFieldId) {
       return null;
     }
     
-    var splitDate = dateElement.value.split("-");
-    if (splitDate.length != 3) {
-      return null;  
-    }
-    
-    return new Date(splitDate[0], splitDate[1] - 1, splitDate[2]);
+//    var splitDate = dateElement.value.split("-");
+//    if (splitDate.length != 3) {
+//      return null;  
+//    }
+//    
+//    return new Date(splitDate[0], splitDate[1] - 1, splitDate[2]);
+    return new Date(dateElement.value);
   }
   
   return dateElement;
 }
-
 
 
 UIUtils.createTextArea = function(textAreaId, rows, defaultText) {
@@ -350,131 +314,50 @@ UIUtils.createTextArea = function(textAreaId, rows, defaultText) {
   return textAreaElement;
 }
 
-//UIUtils.createDropList = function(listId, items) {
-//  var listElement = document.createElement("select");
-//  listElement.setAttribute("id", listId);
-//  
-//  for (var index in items) {
-//    var optionElement = document.createElement("option");
-//
-//    var item = items[index];
-//    optionElement.item = item;
-//    
-//    if (typeof item == "object") {
-//      if (item.element != null) {
-//        optionElement.appendChild(item.element);
-//      } else if (item.display != null) {
-//        optionElement.innerHTML = item.display;
-//      } else {
-//        optionElement.innerHTML = item.data;
-//      }
-//    } else {
-//      optionElement.innerHTML = item;
-//    }
-//    listElement.appendChild(optionElement);
-//  }
-//  
-//  listElement.getSelectedItem = function() {
-//    return listElement.options[listElement.selectedIndex].item;
-//  }
-//  
-//  listElement.getSelectedDisplay = function() {
-//    return this.getSelectedItem().display;
-//  }
-//  
-//  listElement.getSelectedData = function() {
-//    return this.getSelectedItem().data;
-//  }
-//  
-//  listElement.getValue = function() {
-//    return this.getSelectedData();
-//  }
-//  
-//  listElement.selectData = function(itemData) {
-//    for (var index = 0; index < listElement.options.length; index++) {
-//      if (listElement.options[index].item.data == itemData) {
-//        listElement.selectedIndex = index;
-//        break;
-//      }
-//    }
-//  }
-//  
-//  listElement.selectDisplay = function(itemDisplay) {
-//    for (var index = 0; index < listElement.options.length; index++) {
-//      if (listElement.options[index].item.display == itemDisplay) {
-//        listElement.selectedIndex = index;
-//        break;
-//      }
-//    }
-//  }
-//  
-//  listElement.setValue = function(value) {
-//    return this.selectData(value);
-//  }
-//  
-//  listElement.setChangeListener = function(listener) {
-//    if (listener != null) {
-//      this.onchange = function() {
-//        listener(this.getSelectedItem());
-//      }.bind(this);
-//    } else {
-//      this.onchange = null;
-//    }
-//  }
-//  
-//  return listElement;
-//}
-
-UIUtils.createDropList = function(listId, items) {
-  return UIUtils.createMultiOptionList(listId, items, true);
-}
-
 UIUtils.appendDropList = function(root, listId, items) {
-  return root.appendChild(UIUtils.createDropList(UIUtils.createId(root, listId), items));
+  return UIUtils.appendMultiOptionList(root, listId, items, true);
 }
 
-
-UIUtils.createCheckbox = function(cbId, exclusive) {
-  var checkbox = UIUtils._createInputField(cbId, exclusive ? "radio" : "checkbox");
-  checkbox.style.display = "inline-block";
-  checkbox.style.width = "initial";
-  
-  checkbox._changeListener = null;
-  
-  checkbox.getValue = function() {
-    return checkbox.checked;
-  };
-  
-  checkbox.setValue = function(checked) {
-    checkbox.checked = checked;
-    
-    if (checkbox._changeListener != null) {
-      checkbox._changeListener(checked);
-    }
-  };
-  
-  checkbox.setChangeListener = function(listener) {
-    checkbox._changeListener = listener;
-  }
-  
-  return checkbox;
-}
 
 UIUtils.appendCheckbox = function(root, cbId, text, exclusive) {
+  var _appendCheckbox = function(root, cbId, exclusive) {
+    var checkbox = UIUtils._appendInputField(root, cbId, exclusive ? "radio" : "checkbox");
+    checkbox.style.display = "inline-block";
+    checkbox.style.width = "initial";
+
+    checkbox._changeListener = null;
+
+    checkbox.getValue = function() {
+      return checkbox.checked;
+    };
+
+    checkbox.setValue = function(checked) {
+      checkbox.checked = checked;
+
+      if (checkbox._changeListener != null) {
+        checkbox._changeListener(checked);
+      }
+    };
+
+    checkbox.setChangeListener = function(listener) {
+      checkbox._changeListener = listener;
+    }
+
+    return checkbox;
+  }
+
+  
   if (text != null) {
     var combo = UIUtils.appendBlock(root, cbId);
     combo.style.textAlign = "left";
     
-    var checkboxElement = UIUtils.createCheckbox(UIUtils.createId(root, cbId + "-Check"), exclusive);
-    combo.appendChild(checkboxElement);
+    var checkboxElement = _appendCheckbox(combo, cbId + "-Check", exclusive);
     
-    var label = UIUtils.createLabel(UIUtils.createId(root, cbId + "-Label"), text);
+    var label = UIUtils.appendLabel(combo, cbId + "-Label", text);
     label.style.padding = "5px 5px 5px 5px";
     label.style.textAlign = "left";
     label.style.display = "inline-block";
     label.style.font = "inherit";
-    
-    combo.appendChild(label);
     UIUtils.addClass(label, "notselectable");
     
     label.onclick = function() {
@@ -491,28 +374,25 @@ UIUtils.appendCheckbox = function(root, cbId, text, exclusive) {
     
     return checkboxElement;
   } else {
-    var checkboxElement = UIUtils.createCheckbox(UIUtils.createId(root, cbId), exclusive);
-    root.appendChild(checkboxElement);
+    var checkboxElement = _appendCheckbox(root, cbId, exclusive);
     
     return checkboxElement;
   }
 }
 
 
-UIUtils.createLineBreak = function() {
-  return document.createElement("br");
+UIUtils.appendLineBreak = function(root) {
+  return UIUtils.appendElement(root, "br");
 }
 
-UIUtils.createList = function(listId, items) {
-  var listElement = document.createElement("ul");
-  listElement.setAttribute("id", listId);
+UIUtils.appendList = function(root, listId, items) {
+  var listElement = UIUtils.appendElement(root, "ul", listId);
   listElement.style.listStyleType = "none";
   
   for (var index in items) {
     var item = items[index];
     
-    var itemElement = listElement.appendChild(document.createElement("li"));
-    itemElement.setAttribute("id", listId + "-Item" + index);
+    var itemElement = UIUtils.appendElement(listElement, "li", listId + "-Item" + index);
     
     if (item != null && typeof item == "object") {
       if (item.element != null) {
@@ -529,42 +409,23 @@ UIUtils.createList = function(listId, items) {
 }
 
 
-UIUtils.createLink = function(linkId, text) {
-  var linkElement = document.createElement("button");
-  linkElement.setAttribute("id", linkId);
+UIUtils.appendLink = function(root, linkId, text) {
+  var linkElement = UIUtils.appendElement(root, "button", linkId);
   linkElement.setAttribute("class", "link-button");
   linkElement.innerHTML = text;
   
   return linkElement;
 }
 
-UIUtils.appendLink = function(root, linkId, text) {
-  return root.appendChild(UIUtils.createLink(UIUtils.createId(root, linkId), text));
-}
 
-
-
-
-UIUtils.createSeparator = function(sepId) {
-  var separatorElement = document.createElement("hr");
-  
-  if (sepId != null) {
-    separatorElement.setAttribute("id", sepId);
-  }
-  
-  return separatorElement;
-}
 
 UIUtils.appendSeparator = function(root, sepId) {
-  return root.appendChild(UIUtils.createSeparator(sepId));
+  return UIUtils.appendElement(root, "hr", sepId);
 }
 
-UIUtils.createImage = function(imageId, src) {
-  var imageElement = document.createElement("img");
+UIUtils.appendImage = function(root, imageId, src) {
+  var imageElement = UIUtils.appendElement(root, "img", imageId);
   
-  if (imageId != null) {
-    imageElement.setAttribute("id", imageId);
-  }
   if (src != null) {
     imageElement.setAttribute("src", src);
   }
@@ -572,25 +433,16 @@ UIUtils.createImage = function(imageId, src) {
   return imageElement;
 }
 
-UIUtils.appendImage = function(root, imageId, src) {
-  return root.appendChild(UIUtils.createImage(UIUtils.createId(root, imageId), src));
-}
-
-UIUtils.createTable = function(tableId, columns) {
-  var tableElement = document.createElement("table");
-  tableElement.setAttribute("id", tableId);
+UIUtils.appendTable = function(root, tableId, columns) {
+  var tableElement = UIUtils.appendElement(root, "table", tableId);
   tableElement.style.width = "100%";
   
-  var rowElement = document.createElement("tr");
-  rowElement.setAttribute("id", UIUtils.createId(tableId, "row1"));
-  tableElement.appendChild(rowElement);
+  var rowElement = UIUtils.appendElement(tableElement, "tr", "row1");
   
   for (var index in columns) {
     var column = columns[index];
     
-    var columnElement = document.createElement("td");
-    columnElement.setAttribute("id", UIUtils.createId(rowElement, "column" + index));
-    rowElement.appendChild(columnElement);
+    var columnElement = UIUtils.appendElement(rowElement, "td", "column" + index);
     
     if (column.width != null) {
       columnElement.style.width = column.width;
@@ -607,13 +459,9 @@ UIUtils.createTable = function(tableId, columns) {
   return tableElement;
 }
 
-UIUtils.appendTable = function(root, tableId, columns) {
-  return root.appendChild(UIUtils.createTable(UIUtils.createId(root, tableId), columns));
-}
 
-
-UIUtils.createMultiOptionList = function(listId, choices, exclusive) {
-  var mChoiceList = UIUtils.createBlock(listId);
+UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive) {
+  var mChoiceList = UIUtils.appendBlock(root, listId);
   mChoiceList.setAttribute("class", "multichoicelist");
 
   var selector = UIUtils.appendBlock(mChoiceList, "Selector");
@@ -655,7 +503,7 @@ UIUtils.createMultiOptionList = function(listId, choices, exclusive) {
   for (var index in choices) {
     var choice = choices[index];
     
-    var itemElement = UIUtils.createBlock(listId + "-" + index);
+    var itemElement = UIUtils.appendBlock(dropDownListElement, listId + "-" + index);
     itemElement.choice = choice;
     itemElement.setAttribute("class", "multichoicelist-dropdown-item notselectable");
     var checkbox = UIUtils.appendCheckbox(itemElement, listId + "-" + index + "-cb", choice.display, exclusive);
@@ -669,7 +517,6 @@ UIUtils.createMultiOptionList = function(listId, choices, exclusive) {
     checkbox.setAttribute("name", listId);
     itemElement.check = checkbox;
     choiceElements.push(itemElement);
-    dropDownListElement.appendChild(itemElement);
     
     itemElement.onclick = function() {
       refreshLabel();
@@ -992,9 +839,8 @@ UIUtils.appendXCloser = function(root, closerId) {
 
 
 UIUtils.appendFileChooser = function(root) {
-  var fileChooser = UIUtils._createInputField(UIUtils.createId(root, "FileChooser"), "file");
+  var fileChooser = UIUtils._appendInputField(root, "FileChooser", "file");
   fileChooser.style.display = "none";
-  root.appendChild(fileChooser);
 
   fileChooser.addEventListener("change", function() {
     if (fileChooser.selectionCallback != null) {
@@ -1155,18 +1001,13 @@ UIUtils.listenOutsideClicks = function(component, observer) {
   clickListener("touchend");
 }
 
-UIUtils.createId = function(container, elementId) {
-  var containerId = UIUtils._getId(container);
-  return containerId != null ? containerId + "-" + elementId : elementId;
-}
-
 
 UIUtils.getOneLine = function(text) {
   if (text == null || text == "") {
     return "";
   }
 
-  var block = UIUtils.createBlock();
+  var block = document.createElement("div");
   block.innerHTML = text;
   
   var firstLine = block.firstChild;
@@ -1188,10 +1029,10 @@ UIUtils._createLabeledCombo = function(inputFieldId, labelText, inputElement, ma
   compoundElement.style.textAlign = "left";
   compoundElement.style.whiteSpace = "nowrap";
 
-  compoundElement.appendChild(UIUtils.createLabel(inputFieldId + "-Label", labelText));
-  compoundElement.appendChild(UIUtils.createLineBreak());
+  UIUtils.appendLabel(compoundElement, inputFieldId + "-Label", labelText);
+  UIUtils.appendLineBreak(compoundElement);
 
-  inputElement.setAttribute("id", UIUtils.createId(inputFieldId + "-Input"));
+  inputElement.setAttribute("id", UIUtils._createId(inputFieldId + "-Input"));
   compoundElement.appendChild(inputElement);
   inputElement.style.marginTop = margin != null ? margin : "2px";
 
@@ -1202,12 +1043,9 @@ UIUtils._createLabeledCombo = function(inputFieldId, labelText, inputElement, ma
   return compoundElement;
 }
 
-UIUtils._createInputField = function(inputFieldId, inputType) {
-  var inputFieldElement = document.createElement("input");
+UIUtils._appendInputField = function(root, inputFieldId, inputType) {
+  var inputFieldElement = UIUtils.appendElement(root, "input", inputFieldId);
   inputFieldElement.setAttribute("type", inputType != null ? inputType : "text");
-  inputFieldElement.setAttribute("id", inputFieldId);
-//  inputFieldElement.style.display = "block";
-//  inputFieldElement.style.width = "100%";
   
   inputFieldElement.getValue = function() {
     return inputFieldElement.value;
@@ -1231,3 +1069,8 @@ UIUtils._getId = function(component) {
   return id;
 }
 
+
+UIUtils._createId = function(container, elementId) {
+  var containerId = UIUtils._getId(container);
+  return containerId != null ? containerId + "-" + elementId : elementId;
+}
