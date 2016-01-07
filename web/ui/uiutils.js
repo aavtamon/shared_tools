@@ -289,9 +289,8 @@ UIUtils.appendDateInput = function(root, inputFieldId) {
 }
 
 
-UIUtils.createTextArea = function(textAreaId, rows, defaultText) {
-  var textAreaElement = document.createElement("textarea");
-  textAreaElement.setAttribute("id", textAreaId);
+UIUtils.appendTextArea = function(root, textAreaId, rows, defaultText) {
+  var textAreaElement = UIUtils.appendElement(root, "textarea", textAreaId);
   textAreaElement.setAttribute("rows", rows);
   
   textAreaElement.style.width = "100%";
@@ -1024,24 +1023,24 @@ UIUtils.getOneLine = function(text) {
 }
 
 
-UIUtils._createLabeledCombo = function(inputFieldId, labelText, inputElement, margin) {
-  var compoundElement = UIUtils.createBlock(inputFieldId);
-  compoundElement.style.textAlign = "left";
-  compoundElement.style.whiteSpace = "nowrap";
-
-  UIUtils.appendLabel(compoundElement, inputFieldId + "-Label", labelText);
-  UIUtils.appendLineBreak(compoundElement);
-
-  inputElement.setAttribute("id", UIUtils._createId(inputFieldId + "-Input"));
-  compoundElement.appendChild(inputElement);
-  inputElement.style.marginTop = margin != null ? margin : "2px";
-
-  compoundElement.getInputElement = function() {
-    return inputElement;
-  }
-
-  return compoundElement;
-}
+//UIUtils._createLabeledCombo = function(inputFieldId, labelText, inputElement, margin) {
+//  var compoundElement = UIUtils.createBlock(inputFieldId);
+//  compoundElement.style.textAlign = "left";
+//  compoundElement.style.whiteSpace = "nowrap";
+//
+//  UIUtils.appendLabel(compoundElement, inputFieldId + "-Label", labelText);
+//  UIUtils.appendLineBreak(compoundElement);
+//
+//  inputElement.setAttribute("id", UIUtils._createId(inputFieldId + "-Input"));
+//  compoundElement.appendChild(inputElement);
+//  inputElement.style.marginTop = margin != null ? margin : "2px";
+//
+//  compoundElement.getInputElement = function() {
+//    return inputElement;
+//  }
+//
+//  return compoundElement;
+//}
 
 UIUtils._appendInputField = function(root, inputFieldId, inputType) {
   var inputFieldElement = UIUtils.appendElement(root, "input", inputFieldId);
