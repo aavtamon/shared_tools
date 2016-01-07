@@ -91,7 +91,7 @@ UIUtils.hideMessage = function() {
 //    alignment: "left" | "right"
 //  }
 // }
-UIUtils.showDialog = function(dialogId, title, contentDefinition, buttons) {
+UIUtils.showDialog = function(dialogId, title, contentDefinition, buttons, closeOnOutsideClick) {
   UIUtils.hideDialog();
   
   var root = document.getElementsByTagName("body")[0];
@@ -148,10 +148,12 @@ UIUtils.showDialog = function(dialogId, title, contentDefinition, buttons) {
     UIUtils.setClickListener(okButton, UIUtils.hideDialog);
   }
 
-  UIUtils.listenOutsideClicks(dialogElement, UIUtils.fadeOut.bind(this, modalArea));
-  
   dialogElement.close = function() {
     UIUtils.fadeOut(modalArea);
+  }
+
+  if (closeOnOutsideClick) {
+    UIUtils.listenOutsideClicks(dialogElement, dialogElement.close.bind(this));
   }
   
   return dialogElement;
@@ -172,29 +174,6 @@ UIUtils.fadeOut = function(element, speed, listener) {
   });
 }
 
-
-
-//
-//UIUtils.createLabeledTextInput = function(inputFieldId, labelText, margin) {
-//  return UIUtils._createLabeledCombo(inputFieldId, labelText, UIUtils.createTextInput(inputFieldId), margin);
-//}
-//
-//UIUtils.createLabeledPasswordInput = function(inputFieldId, labelText, margin) {
-//  return UIUtils._createLabeledCombo(inputFieldId, labelText, UIUtils.createPasswordInput(inputFieldId), margin);
-//}
-//
-//UIUtils.createLabeledDropList = function(dropListId, labelText, options, margin) {
-//  return UIUtils.createLabeledSingleChoiceList(dropListId, labelText, options, margin);
-//}
-//
-//UIUtils.createLabeledMultiChoiceList = function(listId, labelText, options, margin) {
-//  return UIUtils._createLabeledCombo(listId, labelText, UIUtils.createMultiOptionList(listId, options, false), margin);
-//}
-//
-//UIUtils.createLabeledSingleChoiceList = function(listId, labelText, options, margin) {
-//  return UIUtils._createLabeledCombo(listId, labelText, UIUtils.createMultiOptionList(listId, options, true), margin);
-//}
-//
 
 UIUtils.appendElement = function(root, type, id) {
   var el = document.createElement(type);
@@ -263,12 +242,13 @@ UIUtils.appendDateInput = function(root, inputFieldId) {
   UIUtils.get$(dateElement).datepicker();
   
   dateElement.setDate = function(date) {
-//    var value = date.getFullYear() + "-"
-//                + (date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1))
-//                + "-"
-//                + (date.getDate() < 10 ? "0" + date.getDate() : date.getDate());
+    var value = (date.getMonth() < 9 ? "0" + (date.getMonth() + 1) : (date.getMonth() + 1))
+                + "/" 
+                + (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) 
+                + "/" 
+                + date.getFullYear();
     
-    dateElement.value = date.toDateString();
+    dateElement.value = value;
   }
   
   dateElement.getDate = function() {
@@ -276,13 +256,12 @@ UIUtils.appendDateInput = function(root, inputFieldId) {
       return null;
     }
     
-//    var splitDate = dateElement.value.split("-");
-//    if (splitDate.length != 3) {
-//      return null;  
-//    }
-//    
-//    return new Date(splitDate[0], splitDate[1] - 1, splitDate[2]);
-    return new Date(dateElement.value);
+    var splitDate = dateElement.value.split("/");
+    if (splitDate.length != 3) {
+      return null;  
+    }
+    
+    return new Date(splitDate[2], splitDate[0] - 1, splitDate[1]);
   }
   
   return dateElement;
@@ -373,9 +352,7 @@ UIUtils.appendCheckbox = function(root, cbId, text, exclusive) {
     
     return checkboxElement;
   } else {
-    var checkboxElement = _appendCheckbox(root, cbId, exclusive);
-    
-    return checkboxElement;
+    return _appendCheckbox(root, cbId, exclusive);
   }
 }
 
@@ -986,6 +963,8 @@ UIUtils.removeIfClickedOutside = function(component) {
 
 UIUtils.listenOutsideClicks = function(component, observer) {
   var clickListener = function(bindingType) {
+    $(document).unbind(bindingType);
+    
     $(document).bind(bindingType, function(event) {
       var selector = UIUtils.get$(component);
 
@@ -1022,25 +1001,6 @@ UIUtils.getOneLine = function(text) {
   }
 }
 
-
-//UIUtils._createLabeledCombo = function(inputFieldId, labelText, inputElement, margin) {
-//  var compoundElement = UIUtils.createBlock(inputFieldId);
-//  compoundElement.style.textAlign = "left";
-//  compoundElement.style.whiteSpace = "nowrap";
-//
-//  UIUtils.appendLabel(compoundElement, inputFieldId + "-Label", labelText);
-//  UIUtils.appendLineBreak(compoundElement);
-//
-//  inputElement.setAttribute("id", UIUtils._createId(inputFieldId + "-Input"));
-//  compoundElement.appendChild(inputElement);
-//  inputElement.style.marginTop = margin != null ? margin : "2px";
-//
-//  compoundElement.getInputElement = function() {
-//    return inputElement;
-//  }
-//
-//  return compoundElement;
-//}
 
 UIUtils._appendInputField = function(root, inputFieldId, inputType) {
   var inputFieldElement = UIUtils.appendElement(root, "input", inputFieldId);
