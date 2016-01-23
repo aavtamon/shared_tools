@@ -179,7 +179,7 @@ UIUtils.appendElement = function(root, type, id) {
   var el = document.createElement(type);
   root.appendChild(el);
   if (id != null) {
-    el.setAttribute("id", UIUtils._createId(root, id));
+    el.setAttribute("id", UIUtils.createId(root, id));
   }
   
   return el;
@@ -228,12 +228,12 @@ UIUtils.appendSpan = function(root, width, margin, blockId) {
 }
 
 
-UIUtils.appendTextInput = function(root, inputFieldId) {
-  return UIUtils._appendInputField(root, inputFieldId, "text");
+UIUtils.appendTextInput = function(root, inputFieldId, maxLength, guidingRegexp) {
+  return UIUtils._appendInputField(root, inputFieldId, "text", maxLength, guidingRegexp);
 }
 
-UIUtils.appendPasswordInput = function(root, inputFieldId) {
-  return UIUtils._appendInputField(root, inputFieldId, "password");
+UIUtils.appendPasswordInput = function(root, inputFieldId, maxLength, guidingRegexp) {
+  return UIUtils._appendInputField(root, inputFieldId, "password", maxLength, guidingRegexp);
 }
 
 UIUtils.appendDateInput = function(root, inputFieldId) {
@@ -1002,9 +1002,39 @@ UIUtils.getOneLine = function(text) {
 }
 
 
-UIUtils._appendInputField = function(root, inputFieldId, inputType) {
+UIUtils.createId = function(container, elementId) {
+  var containerId = UIUtils._getId(container);
+  return containerId != null ? containerId + "-" + elementId : elementId;
+}
+
+
+
+UIUtils._appendInputField = function(root, inputFieldId, inputType, maxLength, guidingRegexp) {
   var inputFieldElement = UIUtils.appendElement(root, "input", inputFieldId);
   inputFieldElement.setAttribute("type", inputType != null ? inputType : "text");
+  inputFieldElement._savedValue = "";
+  
+  if (maxLength != null || guidingRegexp != null) {
+    UIUtils.get$(inputFieldElement).bind('input', function() {
+      var value = inputFieldElement.getValue();
+      
+      var validValue = true;
+      
+      if (maxLength != null && value.length > maxLength) {
+        validValue = false;
+      }
+      
+      if (guidingRegexp != null && value.length > 0 && !guidingRegexp.test(value)) {
+        validValue = false;
+      }
+      
+      if (validValue) {
+        inputFieldElement._savedValue = value;
+      } else {
+        inputFieldElement.setValue(inputFieldElement._savedValue);
+      }
+    });  
+  }
   
   inputFieldElement.getValue = function() {
     return inputFieldElement.value;
@@ -1029,7 +1059,3 @@ UIUtils._getId = function(component) {
 }
 
 
-UIUtils._createId = function(container, elementId) {
-  var containerId = UIUtils._getId(container);
-  return containerId != null ? containerId + "-" + elementId : elementId;
-}

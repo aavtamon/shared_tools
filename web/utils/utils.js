@@ -179,14 +179,13 @@ ResourceUtils.loadResource = function(resourceUrl, isJsonResource, callback) {
 
 
 ValidationUtils = {};
-ValidationUtils._EMAIL_REGEXP = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+ValidationUtils.EMAIL_REGEXP = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+ValidationUtils.ID_REGEXP = /^[a-zA-Z][a-zA-Z0-9_ -]*$/;
+ValidationUtils.NUMBER_REGEXP = /^\d+$/;
+ValidationUtils.DOLLAR_REGEXP = /^\d+(?:\.\d{0,2})$/;
 
 ValidationUtils.isValidEmail = function(email) {
-  if (email == null || email.length <= 3) {
-    return false;
-  }
-  
-  return ValidationUtils._EMAIL_REGEXP.test(email);
+  return ValidationUtils.EMAIL_REGEXP.test(email);
 }
 
 ValidationUtils.isValidPassword = function(password) {
@@ -195,9 +194,26 @@ ValidationUtils.isValidPassword = function(password) {
 }
 
 ValidationUtils.isValidDollarAmount = function(amount) {
-  var amountExpression = /^\d+(?:\.\d{0,2})$/;
-  return amountExpression.test(amount);
+  return ValidationUtils.DOLLAR_REGEXP.test(amount);
 }
+
+ValidationUtils.isValidNumber = function(num) {
+  return ValidationUtils.NUMBER_REGEXP.test(num);
+}
+
+ValidationUtils.isValidId = function(id) {
+  return ValidationUtils.ID_REGEXP.test(id);
+}
+
+ValidationUtils.isValidZip = function(zip) {
+  if (zip.length != 6) {
+    return false;
+  }
+  
+  zipAsNumber = parseInt(zip);
+  return zipAsNumber > 100000 && zipAsNumber < 999999;
+}
+
 
 
 
