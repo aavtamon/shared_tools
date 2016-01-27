@@ -1003,6 +1003,10 @@ UIUtils.getOneLine = function(text) {
 
 
 UIUtils.createId = function(container, elementId) {
+  if (elementId != null && (elementId + "").charAt(0) == "!") {
+    return elementId.substring(1);
+  }
+  
   var containerId = UIUtils._getId(container);
   return containerId != null ? containerId + "-" + elementId : elementId;
 }
