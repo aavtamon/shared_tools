@@ -1045,7 +1045,7 @@ UIUtils._appendInputField = function(root, inputFieldId, inputType, maxLength, g
   };
   
   inputFieldElement.setValue = function(value) {
-    inputFieldElement.value = value;
+    inputFieldElement.value = value || "";
   };
   
   return inputFieldElement;
