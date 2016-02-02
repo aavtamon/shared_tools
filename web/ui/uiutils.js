@@ -205,6 +205,14 @@ UIUtils.appendButton = function(root, buttonId, text, isCriticalAction) {
   if (isCriticalAction) {
     UIUtils.addClass(buttonElement, "critical-action-button");
   }
+  
+  buttonElement.setEnabled = function(isEnabled) {
+    UIUtils.setEnabled(buttonElement, isEnabled);
+  }
+
+  buttonElement.setClickListener = function(clickListener) {
+    UIUtils.setClickListener(buttonElement, clickListener);
+  }
 
   return buttonElement;
 }
@@ -365,20 +373,52 @@ UIUtils.appendList = function(root, listId, items) {
   var listElement = UIUtils.appendElement(root, "ul", listId);
   listElement.style.listStyleType = "none";
   
-  for (var index in items) {
-    var item = items[index];
+  listElement.setItems = function(items) {
+    listElement._items = items;
     
-    var itemElement = UIUtils.appendElement(listElement, "li", listId + "-Item" + index);
+    listElement.innerHTML = "";
     
-    if (item != null && typeof item == "object") {
-      if (item.element != null) {
-        itemElement.appendChild(item.element);
+    for (var index in items) {
+      var item = items[index];
+
+      var itemElement = UIUtils.appendElement(listElement, "li", listId + "-Item" + index);
+      UIUtils.setClickListener(itemElement, function() {
+        if (listElement._selectionListener != null) {
+          listElement._selectionListener(this);
+        }
+      }.bind(itemElement));
+
+      if (item != null && typeof item == "object") {
+        if (item.element != null) {
+          itemElement.appendChild(item.element);
+        } else {
+          itemElement.innerHTML = item.display;
+        }
       } else {
-        itemElement.innerHTML = item.display;
+        itemElement.innerHTML = item;
       }
-    } else {
-      itemElement.innerHTML = item;
     }
+  }
+  
+  listElement.setValue = function(items) {
+    this.setItems(items);
+  }
+  
+  listElement.getItems = function() {
+    return listElement._items;
+  }
+  
+  listElement.getValue = function() {
+    return this.getItems();
+  }
+  
+  listElement.setSelectionListener = function(selectionListener) {
+    listElement._selectionListener = selectionListener;
+  }
+  
+  
+  if (items != null) {
+    listElement.setItems(items);
   }
   
   return listElement;
