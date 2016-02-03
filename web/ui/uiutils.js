@@ -375,6 +375,7 @@ UIUtils.appendList = function(root, listId, items) {
   
   listElement.setItems = function(items) {
     listElement._items = items;
+    listElement._selectedItem = null;
     
     listElement.innerHTML = "";
     
@@ -382,7 +383,10 @@ UIUtils.appendList = function(root, listId, items) {
       var item = items[index];
 
       var itemElement = UIUtils.appendElement(listElement, "li", listId + "-Item" + index);
+      itemElement._item = item;
+      
       UIUtils.setClickListener(itemElement, function() {
+        listElement._selectedItem = this;
         if (listElement._selectionListener != null) {
           listElement._selectionListener(this);
         }
@@ -414,6 +418,10 @@ UIUtils.appendList = function(root, listId, items) {
   
   listElement.setSelectionListener = function(selectionListener) {
     listElement._selectionListener = selectionListener;
+  }
+  
+  listElement.getSelectedItem = function() {
+    return listElement._selectedItem != null ? listElement._selectedItem._item : null;
   }
   
   
