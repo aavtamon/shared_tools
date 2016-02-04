@@ -100,7 +100,7 @@ UIUtils.showDialog = function(dialogId, title, contentDefinition, buttons, close
   UIUtils.addClass(modalArea, "modal-dialog-area");
 
   var dialogElement = UIUtils.appendBlock(modalArea, dialogId);
-  dialogElement.setAttribute("id", dialogId);
+  dialogElement.setAttribute("id", UIUtils.createId(null, dialogId));
   UIUtils.addClass(dialogElement, "modal-dialog");
   
   var dialogTitle = UIUtils.appendBlock(dialogElement, "Title");
@@ -1090,6 +1090,10 @@ UIUtils.getOneLine = function(text) {
 UIUtils.createId = function(container, elementId) {
   if (elementId != null && (elementId + "").charAt(0) == "!") {
     return elementId.substring(1);
+  }
+  
+  if (container == null) {
+    return elementId;
   }
   
   var containerId = UIUtils._getId(container);
