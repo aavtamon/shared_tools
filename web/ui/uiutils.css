@@ -440,6 +440,28 @@ select {
 }
 
 
+.selection-list {
+  padding: 0px;
+  font: inherit;
+}
+.selection-list-item {
+  padding: 5px;
+  margin-top: 2px;
+  
+  color: rgb(75, 75, 75);
+  background-color: transparent;
+
+  border-radius: 5px;
+}
+.selection-list-item:hover {
+  background-color: rgb(200, 200, 200);
+}
+.selection-list-item-selected {
+  background-color: rgb(255, 51, 51);
+  color: white;
+}
+
+
 .explanation-pad {
   padding: 5px;
 

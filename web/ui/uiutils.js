@@ -372,24 +372,22 @@ UIUtils.appendLineBreak = function(root) {
 UIUtils.appendList = function(root, listId, items) {
   var listElement = UIUtils.appendElement(root, "ul", listId);
   listElement.style.listStyleType = "none";
+  UIUtils.addClass(listElement, "selection-list");
   
   listElement.setItems = function(items) {
     listElement._items = items;
-    listElement._selectedItem = null;
-    
+
     listElement.innerHTML = "";
     
     for (var index in items) {
       var item = items[index];
 
       var itemElement = UIUtils.appendElement(listElement, "li", listId + "-Item" + index);
+      UIUtils.addClass(itemElement, "selection-list-item");
       itemElement._item = item;
       
       UIUtils.setClickListener(itemElement, function() {
-        listElement._selectedItem = this;
-        if (listElement._selectionListener != null) {
-          listElement._selectionListener(this);
-        }
+        listElement.setSelectedItem(this._item);
       }.bind(itemElement));
 
       if (item != null && typeof item == "object") {
@@ -402,6 +400,11 @@ UIUtils.appendList = function(root, listId, items) {
         itemElement.innerHTML = item;
       }
     }
+    
+    //restore selection
+    var selection = listElement.getSelectedItem();
+    listElement._selectedItem = null;
+    listElement.setSelectedItem(selection);
   }
   
   listElement.setValue = function(items) {
@@ -421,7 +424,35 @@ UIUtils.appendList = function(root, listId, items) {
   }
   
   listElement.getSelectedItem = function() {
-    return listElement._selectedItem != null ? listElement._selectedItem._item : null;
+    return listElement._selectedItem;
+  }
+  
+  listElement.setSelectedItem = function(item) {
+    if (listElement._selectedItem == item) {
+      return;
+    }
+    
+    var newSelectionElement = null;
+    
+    for (var i = 0; i < listElement.children.length; i++) {
+      var child = listElement.children[i];
+      if (child._item == listElement._selectedItem) {
+        UIUtils.removeClass(child, "selection-list-item-selected");
+      } else if (child._item == item) {
+        newSelectionElement = child;
+      }
+    }
+    
+    if (newSelectionElement != null) {
+      UIUtils.addClass(newSelectionElement, "selection-list-item-selected");
+      listElement._selectedItem = item;
+    } else {
+      listElement._selectedItem = null;
+    }
+    
+    if (listElement._selectionListener != null) {
+      listElement._selectionListener(listElement._selectedItem);
+    }
   }
   
   
@@ -624,7 +655,13 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive) {
   }
   
   mChoiceList.setValue = function(items) {
-    return this.selectChoices(items);
+    if (items == null) {
+      this.selectChoices([]);
+    } else if (typeof(items) == "array") {
+      this.selectChoices(items);
+    } else {
+      this.selectChoices([items]);
+    }
   }
   
   mChoiceList.indicateInvalidInput = function() {
