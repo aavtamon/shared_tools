@@ -449,9 +449,10 @@ select {
   margin-top: 2px;
   
   color: rgb(75, 75, 75);
-  background-color: rgb(230, 230, 230);
-
-  border-radius: 5px;
+  
+  border-bottom-color: rgb(166, 166, 166);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
 }
 .selection-list-item:hover {
   color: rgb(75, 75, 75);

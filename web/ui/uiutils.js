@@ -390,6 +390,12 @@ UIUtils.appendList = function(root, listId, items) {
         listElement.setSelectedItem(this._item);
       }.bind(itemElement));
 
+      UIUtils.setDoubleClickListener(itemElement, function() {
+        if (listElement._clickListener) {
+          listElement._clickListener(this._item);
+        }
+      }.bind(itemElement));
+
       if (item != null && typeof item == "object") {
         if (item.element != null) {
           itemElement.appendChild(item.element);
@@ -421,6 +427,10 @@ UIUtils.appendList = function(root, listId, items) {
   
   listElement.setSelectionListener = function(selectionListener) {
     listElement._selectionListener = selectionListener;
+  }
+  
+  listElement.setClickListener = function(clickListener) {
+    listElement._clickListener = clickListener;
   }
   
   listElement.getSelectedItem = function() {
@@ -1034,6 +1044,10 @@ UIUtils.remove = function(element) {
 
 UIUtils.setClickListener = function(element, listener) {
   UIUtils.get$(element).click(listener);
+}
+
+UIUtils.setDoubleClickListener = function(element, listener) {
+  UIUtils.get$(element).dblclick(listener);
 }
 
 UIUtils.setHoverListener = function(element, listener) {
