@@ -525,7 +525,7 @@ UIUtils.appendTable = function(root, tableId, columns) {
 }
 
 
-UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defaultSelection) {
+UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defaultText) {
   var mChoiceList = UIUtils.appendBlock(root, listId);
   UIUtils.addClass(mChoiceList, "multichoicelist");
 
@@ -551,9 +551,11 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
     }
 
     if (value == "") {
-      if (defaultSelection != null) {
-        value = defaultSelection;
-      } else {
+      if (defaultText != null) {
+        value = defaultText;
+      }
+      
+      if (value == "") {
         value = "<br>";
       }
       UIUtils.addClass(selectorText, "multichoicelist-selector-text-default");
@@ -694,7 +696,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
 
 
   // Set default value
-  if (defaultSelection == null && exclusive && choices.length > 0) {
+  if (defaultText == null && exclusive && choices.length > 0) {
     mChoiceList.selectChoices([choices[0]]);
   } else {
     mChoiceList.selectChoices([]);
