@@ -401,6 +401,9 @@ select {
 
   overflow: hidden;
 }
+.multichoicelist-selector-text-default {
+  color: rgb(166, 166, 166);
+}
 .multichoicelist-selector-icon {
   position: absolute;
   width: 20px;

@@ -476,7 +476,7 @@ UIUtils.appendList = function(root, listId, items) {
 
 UIUtils.appendLink = function(root, linkId, text) {
   var linkElement = UIUtils.appendElement(root, "button", linkId);
-  linkElement.setAttribute("class", "link-button");
+  UIUtils.addClass(linkElement, "link-button");
   linkElement.innerHTML = text;
   
   return linkElement;
@@ -527,17 +527,17 @@ UIUtils.appendTable = function(root, tableId, columns) {
 
 UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defaultSelection) {
   var mChoiceList = UIUtils.appendBlock(root, listId);
-  mChoiceList.setAttribute("class", "multichoicelist");
+  UIUtils.addClass(mChoiceList, "multichoicelist");
 
   var selector = UIUtils.appendBlock(mChoiceList, "Selector");
-  selector.setAttribute("class", "multichoicelist-selector notselectable");
+  UIUtils.addClass(selector, "multichoicelist-selector");
+  UIUtils.addClass(selector, "notselectable");
   
   var selectorText = UIUtils.appendBlock(selector, "Text");
-  selectorText.setAttribute("class", "multichoicelist-selector-text");
-  selectorText.innerHTML = "<br>";
+  UIUtils.addClass(selectorText, "multichoicelist-selector-text");
 
   var selectorIcon = UIUtils.appendBlock(selector, "Icon");
-  selectorIcon.setAttribute("class", "multichoicelist-selector-icon");
+  UIUtils.addClass(selectorIcon, "multichoicelist-selector-icon");
   
   var refreshLabel = function() {
     var selectedItems = mChoiceList.getSelectedChoices();
@@ -556,6 +556,9 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
       } else {
         value = "<br>";
       }
+      UIUtils.addClass(selectorText, "multichoicelist-selector-text-default");
+    } else {
+      UIUtils.removeClass(selectorText, "multichoicelist-selector-text-default");
     }
 
     if (value != selectorText.innerHTML) {
@@ -568,7 +571,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
   
   
   var dropDownListElement = UIUtils.appendBlock(mChoiceList, listId + "-dropdown");
-  dropDownListElement.setAttribute("class", "multichoicelist-dropdown");
+  UIUtils.addClass(dropDownListElement, "multichoicelist-dropdown");
   dropDownListElement.style.display = "none";
 
   var choiceElements = [];
@@ -577,7 +580,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
     
     var itemElement = UIUtils.appendBlock(dropDownListElement, listId + "-" + index);
     itemElement.choice = choice;
-    itemElement.setAttribute("class", "multichoicelist-dropdown-item notselectable");
+    UIUtils.addClass(itemElement, "multichoicelist-dropdown-item notselectable");
     var checkbox = UIUtils.appendCheckbox(itemElement, listId + "-" + index + "-cb", choice.display, exclusive);
     checkbox.style.width = "20px";
     if (checkbox.getLabel != null) {
