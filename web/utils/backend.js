@@ -169,7 +169,8 @@ Backend.pullUserPreferences = function(transactionCallback) {
     }
   }
   
-  this._communicate("user/" + Backend.getUserProfile().user_id + "/preferences", "GET", null, true, this._getAuthenticationHeader(), communicationCallback);
+//  this._communicate("user/" + Backend.getUserProfile().user_id + "/preferences", "GET", null, true, this._getAuthenticationHeader(), communicationCallback);
+  communicationCallback.success({});
 }
 
 Backend.updateUserPreferences = function(userPreferences, transactionCallback) {
@@ -192,7 +193,8 @@ Backend.updateUserPreferences = function(userPreferences, transactionCallback) {
     }
   }
 
-  this._communicate("user/" + Backend.getUserProfile().user_id + "/preferences", "PUT", GeneralUtils.merge(Backend.getUserPreferences(), userPreferences), true, this._getAuthenticationHeader(), communicationCallback);
+//  this._communicate("user/" + Backend.getUserProfile().user_id + "/preferences", "PUT", GeneralUtils.merge(Backend.getUserPreferences(), userPreferences), true, this._getAuthenticationHeader(), communicationCallback);
+  communicationCallback.success(userPreferences);
 
   return true;
 }

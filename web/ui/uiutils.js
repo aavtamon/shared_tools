@@ -525,7 +525,7 @@ UIUtils.appendTable = function(root, tableId, columns) {
 }
 
 
-UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive) {
+UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defaultSelection) {
   var mChoiceList = UIUtils.appendBlock(root, listId);
   mChoiceList.setAttribute("class", "multichoicelist");
 
@@ -550,9 +550,16 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive) {
       value += selectedItems[index].display;
     }
 
-    var newValue = value != "" ? value : "<br>";
-    if (newValue != selectorText.innerHTML) {
-      selectorText.innerHTML = newValue;
+    if (value == "") {
+      if (defaultSelection != null) {
+        value = defaultSelection;
+      } else {
+        value = "<br>";
+      }
+    }
+
+    if (value != selectorText.innerHTML) {
+      selectorText.innerHTML = value;
       if (mChoiceList.changeListener != null) {
         mChoiceList.changeListener(mChoiceList.getValue());
       }
@@ -667,7 +674,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive) {
   mChoiceList.setValue = function(items) {
     if (items == null) {
       this.selectChoices([]);
-    } else if (typeof(items) == "array") {
+    } else if (Array.isArray(items)) {
       this.selectChoices(items);
     } else {
       this.selectChoices([items]);
@@ -684,8 +691,10 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive) {
 
 
   // Set default value
-  if (exclusive && choices.length > 0) {
+  if (defaultSelection == null && exclusive && choices.length > 0) {
     mChoiceList.selectChoices([choices[0]]);
+  } else {
+    mChoiceList.selectChoices([]);
   }
   
   return mChoiceList;
