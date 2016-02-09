@@ -584,6 +584,8 @@ select {
 }
 .modal-dialog-leftbutton {
   float: left;
+  margin-left: 10px;
 }
 .modal-dialog-rightbutton {
+  margin-right: 10px;
 }
