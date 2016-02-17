@@ -918,6 +918,7 @@ UIUtils.appendRatingBar = function(root, barId, ratingListener) {
 UIUtils.appendXCloser = function(root, closerId) {
   var closer = UIUtils.appendBlock(root, closerId);
   UIUtils.addClass(closer, "x-closer");
+  UIUtils.addClass(root, "x-closer-container");
   
   return closer;
 }

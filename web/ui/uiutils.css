@@ -359,7 +359,20 @@ select {
   display: inline-block;
   background-color: rgb(225, 60, 50);
 }
-
+.x-closer-container {
+  position: relative;
+}
+.x-closer-container .x-closer {
+  position: absolute;
+  top: -7;
+  right: -10;
+  
+  width: 15px;
+  height: 15px;
+}
+.x-closer-container:hover .x-closer {
+  display: inline-block;
+}
 
 
 .text-editor {
