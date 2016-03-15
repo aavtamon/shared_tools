@@ -145,6 +145,16 @@ select {
 }
 
 
+.search-bar {
+  display: inline-block;
+}
+.search-bar .search-input {
+  display: inline-block;
+}
+.search-bar .search-button {
+  margin-left: 10px;
+}
+
 .attachmentbar {
   height: 70px;
 }

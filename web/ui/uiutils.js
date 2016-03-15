@@ -275,6 +275,34 @@ UIUtils.appendDateInput = function(root, inputFieldId) {
   return dateElement;
 }
 
+UIUtils.appendSearchInput = function(root, searchFieldId) {
+  var searchBar = UIUtils.appendBlock(root, searchFieldId);
+  UIUtils.addClass(searchBar, "search-bar");
+  
+  var searchInput = UIUtils._appendInputField(searchBar, "SearchPanel", "search");
+  UIUtils.addClass(searchInput, "search-input");
+  
+  var searchButton = UIUtils.appendButton(searchBar, "SearchButton", I18n.getLocale().literals.SearchButton);
+  UIUtils.addClass(searchButton, "search-button");
+
+  
+  var changeNotifier = function() {
+    if (searchBar._searchListener == null) {
+      return;
+    }
+    
+    searchBar._searchListener(searchInput.getValue());
+  }
+  
+  searchInput.addEventListener("change", changeNotifier);
+  
+  searchBar.setSearchListener = function(listener) {
+    this._searchListener = listener;
+  }
+  
+  return searchBar;
+}
+
 
 UIUtils.appendTextArea = function(root, textAreaId, rows, defaultText) {
   var textAreaElement = UIUtils.appendElement(root, "textarea", textAreaId);
