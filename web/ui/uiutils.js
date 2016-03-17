@@ -12,7 +12,7 @@ UIUtils.MESSAGE_TIMEOUT_SLOW = 10;
 
 
 
-UIUtils.showSpinningWheel = function() {
+UIUtils.showSpinningWheel = function(showImmediately) {
   if (this._spinnerTimer != null) {
     return;
   }
@@ -24,11 +24,11 @@ UIUtils.showSpinningWheel = function() {
   if ($(".spinning-wheel").length == 0) {
     this._spinnerTimer = setTimeout(function() {
       $("body").append("<div class='spinning-wheel'></div>");
-    }, 2000);
+    }, showImmediately ? 0: 2000);
   }
 }
 
-UIUtils.hideSpinningWheel = function() {
+UIUtils.hideSpinningWheel = function(cancelImmediately) {
   if (this._spinnerCancellationTimer != null) {
     return;
   }
@@ -41,7 +41,7 @@ UIUtils.hideSpinningWheel = function() {
       this._spinnerTimer = null;
     }
     this._spinnerCancellationTimer = null;
-  }.bind(this), 1000);
+  }.bind(this), cancelImmediately ? 0 : 1000);
 }
 
 UIUtils.showMessage = function(msg, timeout, title) {
