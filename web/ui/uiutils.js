@@ -338,8 +338,12 @@ UIUtils.appendCheckbox = function(root, cbId, text, exclusive) {
     var checkbox = UIUtils._appendInputField(root, cbId, exclusive ? "radio" : "checkbox");
     checkbox.style.display = "inline-block";
     checkbox.style.width = "initial";
-
-    checkbox._changeListener = null;
+    
+    checkbox.addEventListener("change", function() {
+      if (checkbox._changeListener != null) {
+        checkbox._changeListener(checkbox.getValue());
+      }
+    });
 
     checkbox.getValue = function() {
       return checkbox.checked;
@@ -352,10 +356,6 @@ UIUtils.appendCheckbox = function(root, cbId, text, exclusive) {
         checkbox._changeListener(checked);
       }
     };
-
-    checkbox.setChangeListener = function(listener) {
-      checkbox._changeListener = listener;
-    }
 
     return checkbox;
   }
@@ -1163,28 +1163,30 @@ UIUtils._appendInputField = function(root, inputFieldId, inputType, maxLength, g
   var inputFieldElement = UIUtils.appendElement(root, "input", inputFieldId);
   inputFieldElement.setAttribute("type", inputType != null ? inputType : "text");
   inputFieldElement._savedValue = "";
+  inputFieldElement._changeListener = null;
   
-  if (maxLength != null || guidingRegexp != null) {
-    UIUtils.get$(inputFieldElement).bind('input', function() {
-      var value = inputFieldElement.getValue();
-      
-      var validValue = true;
-      
-      if (maxLength != null && value.length > maxLength) {
-        validValue = false;
+  UIUtils.get$(inputFieldElement).bind('input', function() {
+    var value = inputFieldElement.getValue();
+
+    var validValue = true;
+
+    if (maxLength != null && value.length > maxLength) {
+      validValue = false;
+    }
+
+    if (guidingRegexp != null && value.length > 0 && !guidingRegexp.test(value)) {
+      validValue = false;
+    }
+
+    if (validValue) {
+      inputFieldElement._savedValue = value;
+      if (inputFieldElement._changeListener != null) {
+        inputFieldElement._changeListener(value);
       }
-      
-      if (guidingRegexp != null && value.length > 0 && !guidingRegexp.test(value)) {
-        validValue = false;
-      }
-      
-      if (validValue) {
-        inputFieldElement._savedValue = value;
-      } else {
-        inputFieldElement.setValue(inputFieldElement._savedValue);
-      }
-    });  
-  }
+    } else {
+      inputFieldElement.setValue(inputFieldElement._savedValue);
+    }
+  });  
   
   inputFieldElement.getValue = function() {
     return inputFieldElement.value;
@@ -1193,6 +1195,12 @@ UIUtils._appendInputField = function(root, inputFieldId, inputType, maxLength, g
   inputFieldElement.setValue = function(value) {
     inputFieldElement.value = value || "";
   };
+  
+  inputFieldElement.setChangeListener = function(listener) {
+    inputFieldElement._changeListener = listener;
+  };
+  
+  
   
   return inputFieldElement;
 }
