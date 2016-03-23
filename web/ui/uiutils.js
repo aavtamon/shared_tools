@@ -12,7 +12,7 @@ UIUtils.MESSAGE_TIMEOUT_SLOW = 10;
 
 
 
-UIUtils.showSpinningWheel = function(showImmediately) {
+UIUtils.showSpinningWheel = function(showImmediately, text) {
   if (this._spinnerTimer != null) {
     return;
   }
@@ -23,7 +23,8 @@ UIUtils.showSpinningWheel = function(showImmediately) {
   
   if ($(".spinning-wheel").length == 0) {
     this._spinnerTimer = setTimeout(function() {
-      $("body").append("<div class='spinning-wheel'></div>");
+      var spinningText = text != null ? text : "";
+      $("body").append("<div class='spinning-indicator'><div class='spinning-wheel'></div><label class='spinning-text'>" + spinningText + "</label></div>");
     }, showImmediately ? 0: 2000);
   }
 }
@@ -34,7 +35,7 @@ UIUtils.hideSpinningWheel = function(cancelImmediately) {
   }
   
   this._spinnerCancellationTimer = setTimeout(function() {
-    $(".spinning-wheel").remove();
+    $(".spinning-indicator").remove();
     
     if (this._spinnerTimer != null) {
       clearTimeout(this._spinnerTimer);
@@ -1055,6 +1056,28 @@ UIUtils.indicateInvalidInput = function(element, observer) {
 
 UIUtils.setEnabled = function(element, isEnabled) {
   UIUtils.get$(element).prop("disabled", !isEnabled);
+}
+
+UIUtils.setVisible = function(element, isVisible) {
+  var queryElement = UIUtils.get$(element);
+  if (queryElement.length == 1) {
+    var el = queryElement.get(0);
+    
+    if (isVisible) {
+      if (el.style.display == "none") {
+        if (el._savedDisplay != null) {
+          el.style.display = el._savedDisplay;
+        } else {
+          el.style.display = "block";
+        }
+      }
+    } else {
+      if (el.style.display != "none") {
+        el._savedDisplay = el.style.display;
+        el.style.display = "none";
+      }
+    }
+  }
 }
 
 UIUtils.get$ = function(component) {

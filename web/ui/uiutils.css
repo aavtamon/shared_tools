@@ -515,20 +515,32 @@ select {
 }
 
 
-.spinning-wheel {
+.spinning-indicator {
   display: inline-block;
   position: fixed;
-  left: calc(50% - 15px);
-  top: calc(50% - 15px);
+  left: calc(50% - 100px);
+  top: calc(50% - 20px);
+
+  width: 200px;
   
   z-index: 110;
-  
+}
+.spinning-indicator .spinning-wheel {
   width: 30px;
   height: 30px;
+  
+  margin-left: 85px;
+  margin-bottom: 10px;
   
   background-image: url(../imgs/ajax-loader.gif);
   background-repeat: no-repeat;
   background-position: center;
+}
+.spinning-indicator .spinning-text {
+  display: block;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .popup-message {

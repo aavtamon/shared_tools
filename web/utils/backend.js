@@ -49,7 +49,7 @@ Backend.logIn = function(login, password, transactionCallback) {
 }
 
 Backend.logOut = function(transactionCallback) {
-  Backend.UserProfile = null;
+  Backend.UserProfile = {};
   
   Backend.Cache.reset();
   
@@ -60,7 +60,7 @@ Backend.logOut = function(transactionCallback) {
 }
 
 Backend.isLogged = function() {
-  return Backend.getUserProfile() != null && Backend.getUserProfile().login != null;
+  return Backend.getUserProfile().login != null;
 }
 
 Backend.pullUserProfile = function(transactionCallback) {
