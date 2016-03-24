@@ -286,13 +286,16 @@ UIUtils.appendSearchInput = function(root, searchFieldId) {
   var searchButton = UIUtils.appendButton(searchBar, "SearchButton", I18n.getLocale().literals.SearchButton);
   UIUtils.addClass(searchButton, "search-button");
 
+  var clearButton = UIUtils.appendButton(searchBar, "ClearSearchButton", I18n.getLocale().literals.ClearSearchButton);
+  UIUtils.addClass(clearButton, "clear-search-button");
+  UIUtils.setEnabled(clearButton, false);
   
   var changeNotifier = function() {
-    if (searchBar._searchListener == null) {
-      return;
-    }
+    UIUtils.setEnabled(clearButton, searchInput.getValue() != "");
     
-    searchBar._searchListener(searchInput.getValue());
+    if (searchBar._searchListener != null) {
+      searchBar._searchListener(searchInput.getValue());
+    }
   }
   
   searchInput.addEventListener("change", changeNotifier);
@@ -300,6 +303,12 @@ UIUtils.appendSearchInput = function(root, searchFieldId) {
   searchBar.setSearchListener = function(listener) {
     this._searchListener = listener;
   }
+  
+  clearButton.setClickListener(function() {
+    searchInput.setValue("");
+    changeNotifier();
+  });
+
   
   return searchBar;
 }

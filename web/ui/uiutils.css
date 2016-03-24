@@ -154,6 +154,9 @@ select {
 .search-bar .search-button {
   margin-left: 10px;
 }
+.search-bar .clear-search-button {
+  margin-left: 10px;
+}
 
 .attachmentbar {
   height: 70px;
