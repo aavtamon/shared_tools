@@ -8,6 +8,10 @@ AbstractPage = ClassUtils.defineClass(Object, function AbstractPage(pageId) {
   this._pageElement.setAttribute("id", pageId);
   this._pageElement.setAttribute("class", "application-page");
   
+  this._headerElement = document.createElement("div");
+  this._headerElement.setAttribute("id", pageId + "-Header");
+  this._headerElement.setAttribute("class", "application-page-header");
+  
   this._isDefined = false;
   
   this._paramBundle = null;
@@ -31,6 +35,7 @@ AbstractPage.prototype.destroy = function() {
 AbstractPage.prototype.reset = function() {
   this._isDefined = false;
   this._pageElement.innerHTML = "";
+  this._headerElement.innerHTML = "";
 }
 
 AbstractPage.prototype.reload = function() {
@@ -48,7 +53,7 @@ AbstractPage.prototype.reload = function() {
   this.show(parent, paramBundle);
 }
 
-AbstractPage.prototype.show = function(container, paramBundle) {
+AbstractPage.prototype.show = function(pageContainer, headerContainer, paramBundle) {
   if (this.isShown()) {
     if (GeneralUtils.isEqual(this._paramBundle, paramBundle)) {
       return;
@@ -57,11 +62,16 @@ AbstractPage.prototype.show = function(container, paramBundle) {
 
   this._paramBundle = paramBundle;
   
-  container.appendChild(this._pageElement);
+  pageContainer.appendChild(this._pageElement);
+  
+  if (headerContainer != null) {
+    headerContainer.appendChild(this._headerElement);
+  }
   
   if (!this._isDefined) {
     try {
       this.reset();
+      this.defineHeaderContent(this._headerElement);
       this.definePageContent(this._pageElement);
       this._isDefined = true;
     } catch (e) {
@@ -81,10 +91,10 @@ AbstractPage.prototype.show = function(container, paramBundle) {
   }
 }
 
-AbstractPage.prototype.showAnimated = function(container, paramBundle) {
+AbstractPage.prototype.showAnimated = function(pageContainer, headerContainer, paramBundle) {
   var isShown = this.isShown();
 
-  this.show(container, paramBundle);
+  this.show(pageContainer, headerContainer, paramBundle);
   
   if (!isShown) {
     this._pageElement.style.display = "none";
@@ -104,6 +114,7 @@ AbstractPage.prototype.hide = function() {
       this.onHide();
     }
     this._pageElement.parentElement.removeChild(this._pageElement);
+    this._headerElement.parentElement.removeChild(this._headerElement);
   }
   
   this._paramBundle = null;
@@ -112,6 +123,7 @@ AbstractPage.prototype.hide = function() {
 AbstractPage.prototype.hideAnimated = function() {
   if (this.isShown()) {
     this.onHide();
+    this._headerElement.parentElement.removeChild(this._headerElement);
     $("#" + this._pageId).slideUp("fast", function() {
       this._pageElement.parentElement.removeChild(this._pageElement);
       if (this._animationObserver != null) {
@@ -136,6 +148,9 @@ AbstractPage.prototype.getPageId = function() {
 }
 
 AbstractPage.prototype.definePageContent = function(root) {
+}
+
+AbstractPage.prototype.defineHeaderContent = function(root) {
 }
 
 AbstractPage.prototype.definePageNoContent = function(root, reason) {

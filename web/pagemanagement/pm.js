@@ -1,4 +1,4 @@
-PageManagement = ClassUtils.defineClass(Object, function PageManagement(rootContainer, initialPages) {
+PageManagement = ClassUtils.defineClass(Object, function PageManagement(rootContainer, headerContainer, initialPages) {
   if (rootContainer == null) {
     throw "Mandatory argument 'rootContainer' is not set";
   }
@@ -7,6 +7,7 @@ PageManagement = ClassUtils.defineClass(Object, function PageManagement(rootCont
   }
   
   this._rootContainer = rootContainer;
+  this._headerContainer = headerContainer;
   this._initialPages = initialPages;
   
   this._currentPage = null;
@@ -161,7 +162,7 @@ PageManagement.prototype._showPage = function(page, paramBundle) {
   if (page.hasHistory()) {
     this._placeHistory(page, paramBundle);
   } else {
-    page.showAnimated(this._rootContainer, paramBundle);
+    page.showAnimated(this._rootContainer, this._headerContainer, paramBundle);
   }
 }
 
@@ -184,7 +185,7 @@ PageManagement.prototype._restorePage = function(paramBundle) {
   }
 
   this._currentPage = page;
-  this._currentPage.showAnimated(this._rootContainer, paramBundle);
+  this._currentPage.showAnimated(this._rootContainer, this._headerContainer, paramBundle);
 }
 
 
