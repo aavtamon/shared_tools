@@ -201,7 +201,9 @@ UIUtils.appendLabel = function(root, labelId, text) {
 UIUtils.appendButton = function(root, buttonId, text, isCriticalAction) {
   var buttonElement = UIUtils.appendElement(root, "button", buttonId);
   
-  buttonElement.innerHTML = text;
+  if (text != null) {
+    buttonElement.innerHTML = text;
+  }
   
   if (isCriticalAction) {
     UIUtils.addClass(buttonElement, "critical-action-button");
@@ -1017,6 +1019,79 @@ UIUtils.appendTextEditor = function(root, editorId, defaultValue) {
   }
 
   return textArea;
+}
+
+
+
+UIUtils.appendGallery = function(root, galleryId) {
+  var gallery = UIUtils.appendBlock(root, galleryId);
+  UIUtils.addClass(gallery, "gallery")
+  
+  gallery._items = [];
+  gallery._selectedIndex = -1;
+  
+  
+  var leftButton = UIUtils.appendButton(gallery, "LeftButton");
+  UIUtils.addClass(leftButton, "gallery-left-button");
+  leftButton.setClickListener(function() {
+    if (gallery._selectedIndex > 0) {
+      gallery.setSelectedItem(gallery._selectedIndex - 1);
+    }
+  });
+  
+  var contentPanel = UIUtils.appendBlock(gallery, "ContentPanel");
+  UIUtils.addClass(contentPanel, "gallery-content-panel");
+
+  var rightButton = UIUtils.appendButton(gallery, "RightButton");
+  UIUtils.addClass(rightButton, "gallery-right-button");
+  rightButton.setClickListener(function() {
+    if (gallery._selectedIndex >= 0 && gallery._selectedIndex < gallery.items.length - 1) {
+      gallery.setSelectedItem(gallery._selectedIndex + 1);
+    }
+  });
+  
+  
+  // item: {"id", label", "icon", "clickListener"}
+  gallery.addItem = function(item) {
+    var itemElement = UIUtils.appendBlock(contentPanel, item.id);
+    UIUtils.addClass(itemElement, "gallery-item");
+    itemElement._item = item;
+    
+    var itemIcon = UIUtils.appendBlock(itemElement, "Icon");
+    UIUtils.addClass(itemIcon, "gallery-item-icon");
+    itemIcon.style.backgroundImage = item.icon;
+    
+    var itemLabel = UIUtils.appendLabel(itemElement, "Label", item.label);
+    UIUtils.addClass(itemLabel, "gallery-item-label");
+    
+    if (item.clickListener) {
+      UIUtils.setClickListener(itemElement, item.clickListener.bind(this, item.id));
+    }
+    
+    gallery._items.push(itemElement);
+    if (gallery.selectedIndex == -1) {
+      gallery.setSelectedItem(0);
+    }
+  };
+  
+  gallery.setSelectedItem = function(index) {
+    if (index < 0 && index >= gallery._items.length) {
+      return;
+    }
+    
+    if (gallery._selectedIndex != -1) {
+      var itemElement = this._items[gallery._selectedIndex];
+      UIUtils.removeClass(itemElement, "gallery-item-selected");
+    }
+    
+    gallery._selectedIndex = index;
+
+    var itemElement = this._items[gallery._selectedIndex];
+    UIUtils.addClass(itemElement, "gallery-item-selected");
+  }
+  
+  
+  return gallery;
 }
 
 
