@@ -1045,7 +1045,7 @@ UIUtils.appendGallery = function(root, galleryId) {
   var rightButton = UIUtils.appendButton(gallery, "RightButton");
   UIUtils.addClass(rightButton, "gallery-right-button");
   rightButton.setClickListener(function() {
-    if (gallery._selectedIndex >= 0 && gallery._selectedIndex < gallery.items.length - 1) {
+    if (gallery._selectedIndex >= 0 && gallery._selectedIndex < gallery._items.length - 1) {
       gallery.setSelectedItem(gallery._selectedIndex + 1);
     }
   });
@@ -1064,12 +1064,21 @@ UIUtils.appendGallery = function(root, galleryId) {
     var itemLabel = UIUtils.appendLabel(itemElement, "Label", item.label);
     UIUtils.addClass(itemLabel, "gallery-item-label");
     
-    if (item.clickListener) {
-      UIUtils.setClickListener(itemElement, item.clickListener.bind(this, item.id));
-    }
-    
+    UIUtils.setClickListener(itemElement, function() {
+      for (var i = 0; i < gallery._items.length; i++) {
+        if (gallery._items[i]._item == item) {
+          gallery.setSelectedItem(i);
+          break;
+        }
+      }
+      
+      if (item.clickListener != null) {
+        item.clickListener(item.id);
+      }
+    }.bind(this));
+
     gallery._items.push(itemElement);
-    if (gallery.selectedIndex == -1) {
+    if (gallery._selectedIndex == -1) {
       gallery.setSelectedItem(0);
     }
   };
