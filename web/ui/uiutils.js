@@ -1051,33 +1051,28 @@ UIUtils.appendGallery = function(root, galleryId) {
   });
   
   
-  // item: {"id", label", "icon", "clickListener"}
-  gallery.addItem = function(item) {
-    var itemElement = UIUtils.appendBlock(contentPanel, item.id);
-    UIUtils.addClass(itemElement, "gallery-item");
-    itemElement._item = item;
+  gallery.appendItem = function(item) {
+    contentPanel.appendChild(item);
+    item.setAttribute("id", UIUtils.createId(contentPanel, gallery._items.length));
+    UIUtils.addClass(item, "gallery-item");
     
-    var itemIcon = UIUtils.appendBlock(itemElement, "Icon");
-    UIUtils.addClass(itemIcon, "gallery-item-icon");
-    itemIcon.style.backgroundImage = item.icon;
+    var onClickListener = item.onclick;
     
-    var itemLabel = UIUtils.appendLabel(itemElement, "Label", item.label);
-    UIUtils.addClass(itemLabel, "gallery-item-label");
-    
-    UIUtils.setClickListener(itemElement, function() {
+    UIUtils.setClickListener(item, function() {
       for (var i = 0; i < gallery._items.length; i++) {
-        if (gallery._items[i]._item == item) {
+        if (gallery._items[i] == item) {
           gallery.setSelectedItem(i);
           break;
         }
       }
       
-      if (item.clickListener != null) {
-        item.clickListener(item.id);
+      if (onClickListener != null) {
+        onClickListener.call(item);
       }
-    }.bind(this));
+    });
 
-    gallery._items.push(itemElement);
+    
+    gallery._items.push(item);
     if (gallery._selectedIndex == -1) {
       gallery.setSelectedItem(0);
     }
