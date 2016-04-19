@@ -13,12 +13,13 @@ UIUtils.MESSAGE_TIMEOUT_SLOW = 10;
 
 
 UIUtils.showSpinningWheel = function(showImmediately, text) {
-  if (this._spinnerTimer != null) {
-    return;
-  }
   if (this._spinnerCancellationTimer != null) {
     clearTimeout(this._spinnerCancellationTimer);
     this._spinnerCancellationTimer = null;
+  }
+
+  if (this._spinnerTimer != null) {
+    return;
   }
   
   if ($(".spinning-wheel").length == 0) {
@@ -36,7 +37,6 @@ UIUtils.hideSpinningWheel = function(cancelImmediately) {
   
   this._spinnerCancellationTimer = setTimeout(function() {
     $(".spinning-indicator").remove();
-    
     if (this._spinnerTimer != null) {
       clearTimeout(this._spinnerTimer);
       this._spinnerTimer = null;

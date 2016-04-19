@@ -399,8 +399,8 @@ Backend._pullEvents = function(eventHandler, transactionCallback) {
 // Cache managememnt
 
 Backend.CacheChangeEvent = {};
-Backend.CacheChangeEvent.TYPE_UPDATED_STARTED = "update_started";
-Backend.CacheChangeEvent.TYPE_UPDATED_FINISHED = "update_finished";
+Backend.CacheChangeEvent.TYPE_UPDATE_STARTED = "update_started";
+Backend.CacheChangeEvent.TYPE_UPDATE_FINISHED = "update_finished";
 
 Backend.addCacheChangeListener = function(listener) {
   Backend.Cache.addCacheChangeListener(listener);
@@ -451,9 +451,9 @@ Backend.Cache.markObjectInUpdate = function(objectType, objectId, isInUpdate) {
     this.cachedObjects[objectType].updateList = [];
   }
   
-  if (isInUpdate) {
-    if (GeneralUtils.containsInArray(this.cachedObjects[objectType].updateList, objectId)) {
-      this.cachedObjects[objectType].updateList = GeneralUtils.removeFromArray(this.cachedObjects[objectType].updateList, objectId);
+  if (isInUpdate == null || isInUpdate == true) {
+    if (!GeneralUtils.containsInArray(this.cachedObjects[objectType].updateList, objectId)) {
+      this.cachedObjects[objectType].updateList.push(objectId);
     }
   } else {
     this.cachedObjects[objectType].updateList = GeneralUtils.removeFromArray(this.cachedObjects[objectType].updateList, objectId);
@@ -502,7 +502,7 @@ Backend.Cache.isInUpdate = function() {
 
 Backend.Cache._fireUpdateEvent = function() {
   var isCurrentlyInUpdate = this.isInUpdate();
-  
+
   if (!this.updateInProgressNotified && isCurrentlyInUpdate) {
     this.updateInProgressNotified = true;
     this._notifyCacheListeners(Backend.CacheChangeEvent.TYPE_UPDATE_STARTED);
