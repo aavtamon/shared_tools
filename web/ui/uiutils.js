@@ -358,16 +358,25 @@ UIUtils.appendCheckbox = function(root, cbId, text, exclusive) {
     });
 
     checkbox.getValue = function() {
-      return checkbox.checked;
-    };
+      return this.isChecked();
+    }
 
     checkbox.setValue = function(checked) {
+      this.setChecked(checked);
+    }
+    
+    checkbox.isChecked = function() {
+      return checkbox.checked;
+    }
+    
+    checkbox.setChecked = function(checked) {
       checkbox.checked = checked;
 
       if (checkbox._changeListener != null) {
         checkbox._changeListener(checked);
       }
-    };
+    }
+    
 
     return checkbox;
   }
@@ -414,43 +423,49 @@ UIUtils.appendList = function(root, listId, items) {
   listElement.style.listStyleType = "none";
   UIUtils.addClass(listElement, "selection-list");
   
+  listElement._items = [];
+  
   listElement.setItems = function(items) {
-    listElement._items = items;
-
     listElement.innerHTML = "";
     
     for (var index in items) {
       var item = items[index];
 
-      var itemElement = UIUtils.appendElement(listElement, "li", listId + "-Item" + index);
-      UIUtils.addClass(itemElement, "selection-list-item");
-      itemElement._item = item;
-      
-      UIUtils.setClickListener(itemElement, function() {
-        listElement.setSelectedItem(this._item);
-      }.bind(itemElement));
-
-      UIUtils.setDoubleClickListener(itemElement, function() {
-        if (listElement._clickListener) {
-          listElement._clickListener(this._item);
-        }
-      }.bind(itemElement));
-
-      if (item != null && typeof item == "object") {
-        if (item.element != null) {
-          itemElement.appendChild(item.element);
-        } else {
-          itemElement.innerHTML = item.display;
-        }
-      } else {
-        itemElement.innerHTML = item;
-      }
+      listElement.addItem(item);
     }
     
     //restore selection
     var selection = listElement.getSelectedItem();
     listElement._selectedItem = null;
     listElement.setSelectedItem(selection);
+  }
+  
+  listElement.addItem = function(item) {
+    var itemElement = UIUtils.appendElement(listElement, "li", listId + "-Item" + listElement._items.length);
+    UIUtils.addClass(itemElement, "selection-list-item");
+    itemElement._item = item;
+    listElement._items.push(item);
+
+    UIUtils.setClickListener(itemElement, function() {
+      listElement.setSelectedItem(this._item);
+    }.bind(itemElement));
+
+    UIUtils.setDoubleClickListener(itemElement, function() {
+      if (listElement._clickListener) {
+        listElement._clickListener(this._item);
+      }
+    }.bind(itemElement));
+
+    if (item != null && typeof item == "object") {
+      if (item.element != null) {
+        itemElement.appendChild(item.element);
+        item.element.setAttribute("id", UIUtils.createId(itemElement, "element"));
+      } else {
+        itemElement.innerHTML = item.display;
+      }
+    } else {
+      itemElement.innerHTML = item;
+    }
   }
   
   listElement.setValue = function(items) {
@@ -1077,6 +1092,13 @@ UIUtils.appendGallery = function(root, galleryId) {
       gallery.setSelectedItem(0);
     }
   };
+  
+  gallery.clear = function() {
+    gallery._items = [];
+    gallery._selectedIndex = -1;
+    
+    UIUtils.emptyContainer(contentPanel);
+  }
   
   gallery.setSelectedItem = function(index) {
     if (index < 0 && index >= gallery._items.length) {
