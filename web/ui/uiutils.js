@@ -1114,6 +1114,9 @@ UIUtils.appendGallery = function(root, galleryId) {
 
     var itemElement = this._items[gallery._selectedIndex];
     UIUtils.addClass(itemElement, "gallery-item-selected");
+
+    var offset = itemElement.getBoundingClientRect().left - contentPanel.getBoundingClientRect().left;
+    contentPanel.scrollLeft = offset;
   }
   
   

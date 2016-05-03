@@ -539,6 +539,8 @@ select {
   width: calc(100% - 80px);
   height: 100%;
   padding-right: 20px;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .gallery-right-button {
   width: 30px;
@@ -556,6 +558,7 @@ select {
   height: calc(90px - 2px);
   margin-left: 20px;
   padding: 5px;
+  white-space: normal;
   
   background-color: aquamarine;
   
