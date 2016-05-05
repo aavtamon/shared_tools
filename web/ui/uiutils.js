@@ -1044,12 +1044,14 @@ UIUtils.appendGallery = function(root, galleryId) {
   
   gallery._items = [];
   gallery._selectedIndex = -1;
+  gallery._enabled = true;
+  gallery._clickListener = null;
   
   
-  var leftButton = UIUtils.appendButton(gallery, "LeftButton");
+  var leftButton = UIUtils.appendBlock(gallery, "LeftButton");
   UIUtils.addClass(leftButton, "gallery-left-button");
-  leftButton.setClickListener(function() {
-    if (gallery._selectedIndex > 0) {
+  UIUtils.setClickListener(leftButton, function() {
+    if (gallery._enabled && gallery._selectedIndex > 0) {
       gallery.setSelectedItem(gallery._selectedIndex - 1);
     }
   });
@@ -1057,10 +1059,10 @@ UIUtils.appendGallery = function(root, galleryId) {
   var contentPanel = UIUtils.appendBlock(gallery, "ContentPanel");
   UIUtils.addClass(contentPanel, "gallery-content-panel");
 
-  var rightButton = UIUtils.appendButton(gallery, "RightButton");
+  var rightButton = UIUtils.appendBlock(gallery, "RightButton");
   UIUtils.addClass(rightButton, "gallery-right-button");
-  rightButton.setClickListener(function() {
-    if (gallery._selectedIndex >= 0 && gallery._selectedIndex < gallery._items.length - 1) {
+  UIUtils.setClickListener(rightButton, function() {
+    if (gallery._enabled && gallery._selectedIndex >= 0 && gallery._selectedIndex < gallery._items.length - 1) {
       gallery.setSelectedItem(gallery._selectedIndex + 1);
     }
   });
@@ -1071,18 +1073,20 @@ UIUtils.appendGallery = function(root, galleryId) {
     item.setAttribute("id", UIUtils.createId(contentPanel, gallery._items.length));
     UIUtils.addClass(item, "gallery-item");
     
-    var onClickListener = item.onclick;
-    
     UIUtils.setClickListener(item, function() {
+      if (!gallery._enabled) {
+        return;
+      }
+      
       for (var i = 0; i < gallery._items.length; i++) {
         if (gallery._items[i] == item) {
           gallery.setSelectedItem(i);
           break;
         }
       }
-      
-      if (onClickListener != null) {
-        onClickListener.call(item);
+
+      if (gallery._clickListener != null) {
+        gallery._clickListener.call(item, item);
       }
     });
 
@@ -1093,11 +1097,26 @@ UIUtils.appendGallery = function(root, galleryId) {
     }
   };
   
+  gallery.setClickListener = function(listener) {
+    gallery._clickListener = listener;
+  }
+  
   gallery.clear = function() {
     gallery._items = [];
     gallery._selectedIndex = -1;
     
     UIUtils.emptyContainer(contentPanel);
+  }
+  
+  gallery.setEnabled = function(enabled) {
+    gallery._enabled = enabled;
+    for (var i = 0; i < gallery._items.length; i++) {
+      if (enabled) {
+        UIUtils.removeClass(gallery._items[i], "item-disabled");
+      } else {
+        UIUtils.addClass(gallery._items[i], "item-disabled");
+      }
+    }
   }
   
   gallery.setSelectedItem = function(index) {

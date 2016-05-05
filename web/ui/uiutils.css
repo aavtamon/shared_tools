@@ -524,49 +524,56 @@ select {
   
   background-color: bisque;
 }
-.gallery-left-button {
-  width: 30px;
-  height: 100px;
-  vertical-align: top;
-  
-  background-image: url(../imgs/left-arrow.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-}
 .gallery-content-panel {
   display: inline-block;
   width: calc(100% - 80px);
-  height: 100%;
-  padding-right: 20px;
+  height: calc(100% - 20px);
+  padding: 10px 20px 10px 0px;
   overflow-x: auto;
   white-space: nowrap;
 }
-.gallery-right-button {
+.gallery-right-button, .gallery-left-button {
+  display: inline-block;
   width: 30px;
   height: 100%;
   vertical-align: top;
   
-  background-image: url(../imgs/left-arrow.png);
+  background-color: rgb(230, 170, 150);
+  
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
 }
+.gallery-right-button:hover, .gallery-left-button:hover {
+  background-color: rgb(230, 180, 170);
+}
+.gallery-right-button:active, .gallery-left-button:active {
+  background-color: rgb(230, 110, 70);
+}
+.gallery-right-button {
+  background-image: url(../imgs/right-arrow.png);
+}
+.gallery-left-button {
+  background-image: url(../imgs/left-arrow.png);
+}
 .gallery-item {
   display: inline-block;
-  width: 90px;
-  height: calc(90px - 2px);
+  width: 86px;
+  height: 86px;
   margin-left: 20px;
   padding: 5px;
   white-space: normal;
   
   background-color: aquamarine;
   
-  border-width: 1px;
+  border-width: 2px;
   border-style: groove;
 }
 .gallery-item.gallery-item-selected {
   border-style: solid;
+}
+.gallery-item.item-disabled {
+  opacity: 0.5;
 }
 
 
