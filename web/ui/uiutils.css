@@ -170,6 +170,8 @@ select {
   background-size: contain;
 }
 .checkbox-combo .checkbox-combo-text {
+  height: var(--checkbox_size);
+  line-height: var(--checkbox_size);
   float: right;
   margin-left: 5px;
   font: inherit;
