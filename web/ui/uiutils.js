@@ -344,8 +344,7 @@ UIUtils.appendDropList = function(root, listId, items) {
   return UIUtils.appendMultiOptionList(root, listId, items, true);
 }
 
-
-UIUtils.appendCheckbox = function(root, cbId, text, exclusive) {
+UIUtils.appendNativeCheckbox = function(root, cbId, text, exclusive) {
   var _appendCheckbox = function(root, cbId, exclusive) {
     var checkbox = UIUtils._appendInputField(root, cbId, exclusive ? "radio" : "checkbox");
     checkbox.style.display = "inline-block";
@@ -411,6 +410,115 @@ UIUtils.appendCheckbox = function(root, cbId, text, exclusive) {
   } else {
     return _appendCheckbox(root, cbId, exclusive);
   }
+}
+
+
+UIUtils.appendCheckbox = function(root, cbId, text) {
+  var checkboxElement = UIUtils.appendBlock(root, cbId);
+  checkboxElement._checked = false;
+  UIUtils.addClass(checkboxElement, "checkbox-combo");
+  
+  var checkFrame = UIUtils.appendBlock(checkboxElement, "Frame");
+  UIUtils.addClass(checkFrame, "checkbox-combo-frame");
+  checkFrame.style.width = checkboxElement.style.checkbox_size;
+  checkFrame.style.height = checkboxElement.style.checkbox_size;
+  
+  var checker = UIUtils.appendBlock(checkFrame, "Check");
+  UIUtils.addClass(checker, "checkbox-combo-check");
+  UIUtils.setVisible(checker, checkboxElement._checked);
+  
+  if (text != null) {
+    var label = UIUtils.appendBlock(checkboxElement, "Text");
+    UIUtils.addClass(label, "checkbox-combo-text notselectable");
+    label.innerHTML = text;
+  }
+  
+  
+  UIUtils.setClickListener(checkboxElement, function() {
+    checkboxElement.setChecked(!checkboxElement.isChecked());
+  });
+
+  
+  checkboxElement.getValue = function() {
+    return this.isChecked();
+  }
+
+  checkboxElement.setValue = function(checked) {
+    this.setChecked(checked);
+  }
+
+  checkboxElement.isChecked = function() {
+    return checkboxElement._checked;
+  }
+
+  checkboxElement.setChecked = function(checked) {
+    checkboxElement._checked = checked;
+    UIUtils.setVisible(checker, checkboxElement._checked);
+
+    if (checkboxElement._changeListener) {
+      checkboxElement._changeListener(checked);
+    }
+  }
+  
+  checkboxElement.setChangeListener = function(listener) {
+    checkboxElement._changeListener = listener;
+  }
+  
+  
+  return checkboxElement;
+}
+
+UIUtils.appendRadioButton = function(root, cbId, text) {
+  var radioButtonElement = UIUtils.appendBlock(root, cbId);
+  radioButtonElement._checked = false;
+  UIUtils.addClass(radioButtonElement, "radiobutton-combo");
+  
+  var radioButtonFrame = UIUtils.appendBlock(radioButtonElement, "Frame");
+  UIUtils.addClass(radioButtonFrame, "radiobutton-combo-frame");
+  
+  var checker = UIUtils.appendBlock(radioButtonFrame, "Check");
+  UIUtils.addClass(checker, "radiobutton-combo-check");
+  UIUtils.setVisible(checker, radioButtonElement._checked);
+  
+  if (text != null) {
+    var label = UIUtils.appendBlock(radioButtonElement, "Text");
+    UIUtils.addClass(label, "radiobutton-combo-text notselectable");
+    label.innerHTML = text;
+  }
+  
+  
+  UIUtils.setClickListener(radioButtonElement, function() {
+    radioButtonElement.setChecked(true);
+  });
+
+  
+  radioButtonElement.getValue = function() {
+    return this.isChecked();
+  }
+
+  radioButtonElement.setValue = function(checked) {
+    this.setChecked(checked);
+  }
+
+  radioButtonElement.isChecked = function() {
+    return radioButtonElement._checked;
+  }
+
+  radioButtonElement.setChecked = function(checked) {
+    radioButtonElement._checked = checked;
+    UIUtils.setVisible(checker, radioButtonElement._checked);
+
+    if (radioButtonElement._changeListener) {
+      radioButtonElement._changeListener(checked);
+    }
+  }
+  
+  radioButtonElement.setChangeListener = function(listener) {
+    radioButtonElement._changeListener = listener;
+  }
+  
+  
+  return radioButtonElement;
 }
 
 
@@ -638,7 +746,12 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
     var itemElement = UIUtils.appendBlock(dropDownListElement, listId + "-" + index);
     itemElement.choice = choice;
     UIUtils.addClass(itemElement, "multichoicelist-dropdown-item notselectable");
-    var checkbox = UIUtils.appendCheckbox(itemElement, listId + "-" + index + "-cb", choice.display, exclusive);
+    var checkbox;
+    if (exclusive) {
+      checkbox = UIUtils.appendRadioButton(itemElement, listId + "-" + index + "-cb", choice.display);
+    } else {
+      checkbox = UIUtils.appendCheckbox(itemElement, listId + "-" + index + "-cb", choice.display);
+    }
     checkbox.style.width = "20px";
     if (checkbox.getLabel != null) {
       checkbox.getLabel().style.width = "calc(100% - 45px)";
