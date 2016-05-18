@@ -526,8 +526,44 @@ UIUtils.appendLineBreak = function(root) {
   return UIUtils.appendElement(root, "br");
 }
 
-UIUtils.appendList = function(root, listId, items) {
+UIUtils.appendList = function(root, listId, items, enableDND) {
   var listElement = UIUtils.appendElement(root, "ul", listId);
+  if (enableDND) {
+    listElement.ondrop = function(event) {
+      event.preventDefault();
+      
+      var data = event.dataTransfer.getData("text");
+      var element = document.getElementById(data);
+
+      var dragPosition = listElement.getItemIndex(element._item);
+      var dropPosition = listElement.getItemIndexAtPosition(event.pageY);
+      
+      if (dragPosition == dropPosition) {
+        return;
+      } else if (dragPosition < dropPosition) {
+        if (dropPosition == listElement._items.length - 1) {
+          listElement.removeChild(element);
+          listElement.appendChild(element);
+        } else {
+          var elementAfter = listElement._items[dropPosition + 1].element.parentElement;
+          listElement.removeChild(element);
+          listElement.insertBefore(element, elementAfter);
+        }
+      } else {
+        var elementAfter = listElement._items[dropPosition].element.parentElement;
+        listElement.removeChild(element);
+        listElement.insertBefore(element, elementAfter);
+      }
+
+      var item = listElement._items[dragPosition];
+      listElement._items.splice(dragPosition, 1);
+      listElement._items.splice(dropPosition, 0, item);
+    }
+    
+    listElement.ondragover = function(event) {
+      event.preventDefault();
+    }
+  }
   listElement.style.listStyleType = "none";
   UIUtils.addClass(listElement, "selection-list");
   
@@ -550,6 +586,12 @@ UIUtils.appendList = function(root, listId, items) {
   
   listElement.addItem = function(item) {
     var itemElement = UIUtils.appendElement(listElement, "li", listId + "-Item" + listElement._items.length);
+    if (enableDND) {
+      itemElement.setAttribute("draggable", true);
+      itemElement.ondragstart = function(event) {
+        event.dataTransfer.setData("text", itemElement.id);
+      }
+    }
     UIUtils.addClass(itemElement, "selection-list-item");
     itemElement._item = item;
     listElement._items.push(item);
@@ -573,7 +615,10 @@ UIUtils.appendList = function(root, listId, items) {
       }
     } else {
       itemElement.innerHTML = item;
+      item.element = itemElement;
     }
+    
+    return itemElement;
   }
   
   listElement.setValue = function(items) {
@@ -587,6 +632,36 @@ UIUtils.appendList = function(root, listId, items) {
   listElement.getValue = function() {
     return this.getItems();
   }
+  
+  listElement.clear = function() {
+    listElement.setItems([]);
+  }
+  
+  listElement.getItemIndexAtPosition = function(pagePosition) {
+    if (listElement._items.length == 0) {
+      return null;
+    }
+    
+    for (var i in listElement._items) {
+      var element = listElement._items[i].element;
+      if (UIUtils.get$(element).offset().top > pagePosition) {
+        return i > 0 ? i - 1 : 0;
+      }
+    }
+    
+    return listElement._items.length - 1;
+  }
+
+  listElement.getItemIndex = function(item) {
+    for (var i in listElement._items) {
+      if (listElement._items[i] == item) {
+        return i;
+      }
+    }
+    
+    return null;
+  }
+  
   
   listElement.setSelectionListener = function(selectionListener) {
     listElement._selectionListener = selectionListener;
@@ -1230,6 +1305,10 @@ UIUtils.appendGallery = function(root, galleryId) {
         UIUtils.addClass(gallery._items[i], "item-disabled");
       }
     }
+  }
+  
+  gallery.getSelectedItem = function() {
+    return gallery._selectedIndex != -1 ? this._items[gallery._selectedIndex] : null;
   }
   
   gallery.setSelectedItem = function(index) {
