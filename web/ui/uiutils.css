@@ -178,18 +178,21 @@ select {
   float: right;
   margin-left: 5px;
   font: inherit;
+  
+  color: rgb(75, 75, 75);
 }
 
 
 .radiobutton-combo {
   display: inline-block;
-  height: 15px;
+  --radiobutton_size: 15px;
   
   cursor: default;
 }
 .radiobutton-combo .radiobutton-combo-frame {
   display: inline-block;  
-  height: 100%;
+  width: var(--radiobutton_size);
+  height: var(--radiobutton_size);
 
   border-radius: 10px;
   border-style: solid;
@@ -206,9 +209,13 @@ select {
   background-color: black;
 }
 .radiobutton-combo .radiobutton-combo-text {
+  height: var(--radiobutton_size);
+  line-height: var(--radiobutton_size);
   float: right;
   margin-left: 5px;
   font: inherit;
+  
+  color: rgb(75, 75, 75);
 }
 
 
@@ -476,11 +483,12 @@ select {
   text-align: left;
   
   cursor: default;
+  
+  color: rgb(75, 75, 75);
+  background-color: rgb(248, 248, 248);  
 }
 .multichoicelist-selector {
   padding: 1px;
-  
-  background-color: rgb(248, 248, 248);
   
   border-style: solid;
   border-width: 1px;
@@ -492,6 +500,7 @@ select {
   padding-right: 2px;
   max-width: calc(100% - 40px);
 
+  white-space: nowrap;
   overflow: hidden;
 }
 .multichoicelist-selector-text-default {
@@ -530,6 +539,8 @@ select {
   border-color: rgb(166, 166, 166);
 }
 .multichoicelist-dropdown-item {
+  padding: 3px;
+  
   border-radius: 5px;
 }
 .multichoicelist-dropdown-item:hover {

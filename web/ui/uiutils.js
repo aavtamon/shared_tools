@@ -585,7 +585,7 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
   }
   
   listElement.addItem = function(item) {
-    var itemElement = UIUtils.appendElement(listElement, "li", listId + "-Item" + listElement._items.length);
+    var itemElement = UIUtils.appendElement(listElement, "li", "Item" + listElement._items.length);
     if (enableDND) {
       itemElement.setAttribute("draggable", true);
       itemElement.ondragstart = function(event) {
@@ -779,7 +779,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
   
   var refreshLabel = function() {
     var selectedItems = mChoiceList.getSelectedChoices();
-    
+
     var value = "";
     for (var index in selectedItems) {
       if (value != "") {
@@ -810,7 +810,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
   };
   
   
-  var dropDownListElement = UIUtils.appendBlock(mChoiceList, listId + "-dropdown");
+  var dropDownListElement = UIUtils.appendBlock(mChoiceList, "dropdown");
   UIUtils.addClass(dropDownListElement, "multichoicelist-dropdown");
   dropDownListElement.style.display = "none";
 
@@ -818,23 +818,16 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
   for (var index in choices) {
     var choice = choices[index];
     
-    var itemElement = UIUtils.appendBlock(dropDownListElement, listId + "-" + index);
+    var itemElement = UIUtils.appendBlock(dropDownListElement, index);
     itemElement.choice = choice;
     UIUtils.addClass(itemElement, "multichoicelist-dropdown-item notselectable");
     var checkbox;
     if (exclusive) {
-      checkbox = UIUtils.appendRadioButton(itemElement, listId + "-" + index + "-cb", choice.display);
+      checkbox = UIUtils.appendRadioButton(itemElement, "cb", choice.display);
     } else {
-      checkbox = UIUtils.appendCheckbox(itemElement, listId + "-" + index + "-cb", choice.display);
-    }
-    checkbox.style.width = "20px";
-    if (checkbox.getLabel != null) {
-      checkbox.getLabel().style.width = "calc(100% - 45px)";
-      checkbox.getLabel().style.color = "inherit";
-    }
+      checkbox = UIUtils.appendCheckbox(itemElement, "cb", choice.display);
+    }    
     
-    
-    checkbox.setAttribute("name", listId);
     itemElement.check = checkbox;
     choiceElements.push(itemElement);
     
@@ -842,8 +835,9 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
       refreshLabel();
       if (exclusive) {
         dropDownListElement.style.display = "none";
+        mChoiceList.selectChoices(this.choice);
       }
-    };
+    }.bind(itemElement);
   }
   
   selector.onclick = function() {
@@ -862,7 +856,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
     var result = [];
     
     for (var index in choiceElements) {
-      if (choiceElements[index].check.checked) {
+      if (choiceElements[index].check.getValue()) {
         result.push(choices[index]);
       }
     }
@@ -908,7 +902,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
           break;
         }
       }
-    
+
       choiceElements[index].check.setValue(found);
     }
     
@@ -927,6 +921,9 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
     } else {
       this.selectChoices([items]);
     }
+    
+    console.debug("selected choices: ");
+    console.debug(this.getSelectedChoices());
   }
   
   mChoiceList.indicateInvalidInput = function() {
