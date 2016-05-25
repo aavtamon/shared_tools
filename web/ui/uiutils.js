@@ -571,6 +571,7 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
   
   listElement.setItems = function(items) {
     listElement.innerHTML = "";
+    listElement._items = [];
     
     for (var index in items) {
       var item = items[index];
@@ -621,6 +622,16 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
     return itemElement;
   }
   
+  listElement.removeItem = function(item) {
+    GeneralUtils.removeFromArray(listElement._items, item);
+    for (var i = 0; i < listElement.childNodes.length; i++) {
+      if (listElement.childNodes[i]._item == item) {
+        listElement.removeChild(listElement.childNodes[i]);
+        break;
+      }
+    }
+  }
+  
   listElement.setValue = function(items) {
     this.setItems(items);
   }
@@ -635,6 +646,7 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
   
   listElement.clear = function() {
     listElement.setItems([]);
+    listElement._selectedItem = null;
   }
   
   listElement.getItemIndexAtPosition = function(pagePosition) {
@@ -697,8 +709,8 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
     } else {
       listElement._selectedItem = null;
     }
-    
-    if (listElement._selectionListener != null) {
+
+    if (listElement._selectionListener != null && listElement._selectedItem != null) {
       listElement._selectionListener(listElement._selectedItem);
     }
   }
@@ -921,9 +933,6 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
     } else {
       this.selectChoices([items]);
     }
-    
-    console.debug("selected choices: ");
-    console.debug(this.getSelectedChoices());
   }
   
   mChoiceList.indicateInvalidInput = function() {
