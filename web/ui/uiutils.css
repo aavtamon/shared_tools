@@ -477,6 +477,28 @@ select {
 }
 
 
+.expandable-button-pad {
+  position: relative;
+  display: inline-block;
+}
+.expandable-button-pad .expandable-button {
+}
+.expandable-button-pad .expandable-button.expandable-button-expanded {
+  background-color: rgb(0, 102, 51);
+}
+.expandable-button-pad .expansion-panel {
+  position: absolute;
+  bottom: 100%;
+  right: 0px;
+  
+  width: 100%;
+}
+.expandable-button-pad .expansion-panel .expansion-panel-button {
+  width: calc(100% - 30px);
+  margin-left: 30px;
+  margin-bottom: 2px;
+}
+
 
 .multichoicelist {
   position: relative;

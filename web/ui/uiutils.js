@@ -220,6 +220,52 @@ UIUtils.appendButton = function(root, buttonId, text, isCriticalAction) {
   return buttonElement;
 }
 
+UIUtils.appendExpandableButton = function(root, buttonId, text, expandableActions) {
+  var buttonPad = UIUtils.appendBlock(root, buttonId);
+  UIUtils.addClass(buttonPad, "expandable-button-pad");
+  
+  var buttonElement = UIUtils.appendButton(buttonPad, "Button", text);
+  UIUtils.addClass(buttonElement, "expandable-button");
+  
+  buttonElement.setClickListener(function() {
+    var removeExpansionPanel = function() {
+      if (buttonPad._expansionPanel != null) {
+        buttonPad.removeChild(buttonPad._expansionPanel);
+        buttonPad._expansionPanel = null;
+        
+        UIUtils.removeClass(buttonElement, "expandable-button-expanded");
+      }
+    }
+    
+    if (buttonPad._expansionPanel != null) {
+      removeExpansionPanel();
+      return;
+    }
+    
+    var expansionPanel = UIUtils.appendBlock(buttonPad, "ExpansionPanel");
+    UIUtils.addClass(expansionPanel, "expansion-panel");
+    UIUtils.addClass(buttonElement, "expandable-button-expanded");
+    
+    
+    buttonPad._expansionPanel = expansionPanel;
+    UIUtils.setClickListener(expansionPanel, removeExpansionPanel);
+    UIUtils.listenOutsideClicks(buttonPad, removeExpansionPanel);
+    
+    for (var i in expandableActions) {
+      var action = expandableActions[i];
+      
+      var actionButton = UIUtils.appendButton(expansionPanel, i, action.display);
+      UIUtils.addClass(actionButton, "expansion-panel-button");
+      
+      if (action.clickListener) {
+        actionButton.setClickListener(action.clickListener);
+      }
+    }
+  });
+  
+  return buttonElement;
+}
+
 UIUtils.appendBlock = function(root, blockId) {
   return UIUtils.appendElement(root, "div", blockId);
 }
@@ -1272,6 +1318,7 @@ UIUtils.appendGallery = function(root, galleryId) {
         return;
       }
       
+      var currentSelection = gallery.getSelectedItem();
       for (var i = 0; i < gallery._items.length; i++) {
         if (gallery._items[i] == item) {
           gallery.setSelectedItem(i);
@@ -1279,7 +1326,7 @@ UIUtils.appendGallery = function(root, galleryId) {
         }
       }
 
-      if (gallery._clickListener != null) {
+      if (gallery._clickListener != null && currentSelection == gallery.getSelectedItem()) {
         gallery._clickListener.call(item, item);
       }
     });
