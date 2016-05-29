@@ -756,7 +756,7 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
       listElement._selectedItem = null;
     }
 
-    if (listElement._selectionListener != null && listElement._selectedItem != null) {
+    if (listElement._selectionListener != null) {
       listElement._selectionListener(listElement._selectedItem);
     }
   }
