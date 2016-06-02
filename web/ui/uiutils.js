@@ -604,6 +604,10 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
       var item = listElement._items[dragPosition];
       listElement._items.splice(dragPosition, 1);
       listElement._items.splice(dropPosition, 0, item);
+      
+      if (listElement._orderListener) {
+        listElement._orderListener(listElement._items);
+      }
     }
     
     listElement.ondragover = function(event) {
@@ -727,6 +731,10 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
   
   listElement.setClickListener = function(clickListener) {
     listElement._clickListener = clickListener;
+  }
+  
+  listElement.setOrderListener = function(orderListener) {
+    listElement._orderListener = orderListener;
   }
   
   listElement.getSelectedItem = function() {
