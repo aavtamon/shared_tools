@@ -227,7 +227,17 @@ UIUtils.appendExpandableButton = function(root, buttonId, text, expandableAction
   var buttonElement = UIUtils.appendButton(buttonPad, "Button", text);
   UIUtils.addClass(buttonElement, "expandable-button");
   
+  var actions = expandableActions;
+  
+  buttonElement.setExpandableActions = function(expandableActions) {
+    actions = expandableActions;
+  }
+  
   buttonElement.setClickListener(function() {
+    if (actions == null && actions.length == 0) {
+      return;
+    }
+    
     var removeExpansionPanel = function() {
       if (buttonPad._expansionPanel != null) {
         buttonPad.removeChild(buttonPad._expansionPanel);
@@ -251,8 +261,8 @@ UIUtils.appendExpandableButton = function(root, buttonId, text, expandableAction
     UIUtils.setClickListener(expansionPanel, removeExpansionPanel);
     UIUtils.listenOutsideClicks(buttonPad, removeExpansionPanel);
     
-    for (var i in expandableActions) {
-      var action = expandableActions[i];
+    for (var i in actions) {
+      var action = actions[i];
       
       var actionButton = UIUtils.appendButton(expansionPanel, i, action.display);
       UIUtils.addClass(actionButton, "expansion-panel-button");
