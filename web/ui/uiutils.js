@@ -773,6 +773,10 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
     } else {
       listElement._selectedItem = null;
     }
+    
+    var offset = newSelectionElement.getBoundingClientRect().top - listElement.getBoundingClientRect().top;
+    listElement.scrollTop = offset;
+    
 
     if (listElement._selectionListener != null) {
       listElement._selectionListener(listElement._selectedItem);
