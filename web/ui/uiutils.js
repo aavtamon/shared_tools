@@ -770,14 +770,14 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
     if (newSelectionElement != null) {
       UIUtils.addClass(newSelectionElement, "selection-list-item-selected");
       listElement._selectedItem = item;
+      
+      var offset = newSelectionElement.getBoundingClientRect().top - listElement.getBoundingClientRect().top;
+      listElement.scrollTop = offset;
     } else {
       listElement._selectedItem = null;
+      listElement.scrollTop = 0;
     }
     
-    var offset = newSelectionElement.getBoundingClientRect().top - listElement.getBoundingClientRect().top;
-    listElement.scrollTop = offset;
-    
-
     if (listElement._selectionListener != null) {
       listElement._selectionListener(listElement._selectedItem);
     }
@@ -894,32 +894,6 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
   UIUtils.addClass(dropDownListElement, "multichoicelist-dropdown");
   dropDownListElement.style.display = "none";
 
-  var choiceElements = [];
-  for (var index in choices) {
-    var choice = choices[index];
-    
-    var itemElement = UIUtils.appendBlock(dropDownListElement, index);
-    itemElement.choice = choice;
-    UIUtils.addClass(itemElement, "multichoicelist-dropdown-item notselectable");
-    var checkbox;
-    if (exclusive) {
-      checkbox = UIUtils.appendRadioButton(itemElement, "cb", choice.display);
-    } else {
-      checkbox = UIUtils.appendCheckbox(itemElement, "cb", choice.display);
-    }    
-    
-    itemElement.check = checkbox;
-    choiceElements.push(itemElement);
-    
-    itemElement.onclick = function() {
-      refreshLabel();
-      if (exclusive) {
-        dropDownListElement.style.display = "none";
-        mChoiceList.selectChoices(this.choice);
-      }
-    }.bind(itemElement);
-  }
-  
   selector.onclick = function() {
     if (dropDownListElement.style.display == "none") {
       dropDownListElement.style.display = "block";
@@ -931,6 +905,42 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
     }
   };
 
+  var choiceElements = [];
+  
+
+  mChoiceList.setItems = function(items) {
+    choiceElements = [];
+    UIUtils.emptyContainer(dropDownListElement);
+    
+    if (items == null) {
+      return;
+    }
+    
+    for (var index in items) {
+      var choice = items[index];
+
+      var itemElement = UIUtils.appendBlock(dropDownListElement, index);
+      itemElement.choice = choice;
+      UIUtils.addClass(itemElement, "multichoicelist-dropdown-item notselectable");
+      var checkbox;
+      if (exclusive) {
+        checkbox = UIUtils.appendRadioButton(itemElement, "cb", choice.display);
+      } else {
+        checkbox = UIUtils.appendCheckbox(itemElement, "cb", choice.display);
+      }    
+
+      itemElement.check = checkbox;
+      choiceElements.push(itemElement);
+
+      itemElement.onclick = function() {
+        refreshLabel();
+        if (exclusive) {
+          dropDownListElement.style.display = "none";
+          mChoiceList.selectChoices(this.choice);
+        }
+      }.bind(itemElement);
+    }
+  }
     
   mChoiceList.getSelectedChoices = function() {
     var result = [];
@@ -1011,9 +1021,13 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
     this.changeListener = listener;
   }
 
+  
+  
+  mChoiceList.setItems(choices);
+
 
   // Set default value
-  if (defaultText == null && exclusive && choices.length > 0) {
+  if (defaultText == null && exclusive && choices != null && choices.length > 0) {
     mChoiceList.selectChoices([choices[0]]);
   } else {
     mChoiceList.selectChoices([]);
