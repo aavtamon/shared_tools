@@ -529,13 +529,10 @@ select {
   color: rgb(166, 166, 166);
 }
 .multichoicelist-selector-icon {
-  position: absolute;
+  display: inline-block;
+  float: right;
   width: 20px;
   height: 20px;
-  top: 50%;
-  margin-top: -10px;
-  right: 10px;
-  display: inline-block;
   
   background-image: url(../imgs/down-arrow.png);
   background-repeat: no-repeat;
