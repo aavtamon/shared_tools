@@ -40,6 +40,29 @@ button:disabled {
   background-color: rgb(233, 51, 51);
 }
 
+.toggle-button {
+  position: relative;
+  
+  padding-left: 30px;
+}
+.toggle-button .toggle-button-indicator {
+  position: absolute;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  
+  left: 10px;
+  top: calc(50% - 5px);
+  
+  border-radius: 5px;
+  
+  background-color: gray;
+}
+.toggle-button-selected .toggle-button-indicator {
+  background-color: red;
+}
+
+
 a {
   color: rgb(50, 50, 150);
   cursor: pointer;

@@ -220,6 +220,59 @@ UIUtils.appendButton = function(root, buttonId, text, isCriticalAction) {
   return buttonElement;
 }
 
+UIUtils.appendToggleButton = function(root, buttonId, onText, offText, automatic) {
+  var buttonElement = UIUtils.appendButton(root, buttonId, offText != null ? offText : onText);
+  UIUtils.addClass(buttonElement, "toggle-button");
+  
+  var indicatorElement = UIUtils.appendBlock(buttonElement, "Indicator");
+  UIUtils.addClass(indicatorElement, "toggle-button-indicator");
+  
+  buttonElement._isSelected = false;
+  buttonElement._selectionListener = null;
+  
+  buttonElement.isSelected = function() {
+    return buttonElement._isSelected;
+  }
+  
+  buttonElement.setSelected = function(selected) {
+    if (this._isSelected == selected) {
+      return;
+    }
+    
+    if (selected) {
+      buttonElement._isSelected = true;
+      UIUtils.addClass(buttonElement, "toggle-button-selected");
+      if (offText != null) {
+        buttonElement.childNodes[0].nodeValue = onText;
+      }
+    } else {
+      buttonElement._isSelected = false;
+      UIUtils.removeClass(buttonElement, "toggle-button-selected");
+      if (offText != null) {
+        buttonElement.childNodes[0].nodeValue = offText;
+      }
+    }
+    
+    if (this._selectionListener != null) {
+      this._selectionListener(buttonElement._isSelected);
+    }
+  }
+  
+
+  buttonElement.setSelectionListener = function(listener) {
+    this._selectionListener = listener;
+  }
+
+  
+  if (automatic) {
+    buttonElement.setClickListener(function() {
+      buttonElement.setSelected(!buttonElement.isSelected());
+    });
+  }
+  
+  return buttonElement;
+}
+
 UIUtils.appendExpandableButton = function(root, buttonId, text, expandableActions) {
   var buttonPad = UIUtils.appendBlock(root, buttonId);
   UIUtils.addClass(buttonPad, "expandable-button-pad");
