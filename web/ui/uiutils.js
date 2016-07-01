@@ -650,6 +650,10 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
       if (dragPosition == dropPosition) {
         return;
       } else if (dragPosition < dropPosition) {
+        if (listElement._preorderListener) {
+          listElement._preorderListener();
+        }
+        
         if (dropPosition == listElement._items.length - 1) {
           listElement.removeChild(element);
           listElement.appendChild(element);
@@ -659,6 +663,10 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
           listElement.insertBefore(element, elementAfter);
         }
       } else {
+        if (listElement._preorderListener) {
+          listElement._preorderListener();
+        }
+        
         var elementAfter = listElement._items[dropPosition].element.parentElement;
         listElement.removeChild(element);
         listElement.insertBefore(element, elementAfter);
@@ -800,6 +808,10 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
     this._orderListener = orderListener;
   }
   
+  listElement.setPreorderListener = function(preorderListener) {
+    this._preorderListener = preorderListener;
+  }
+  
   listElement.getSelectedItem = function() {
     return this._selectedItem;
   }
@@ -823,8 +835,7 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
       UIUtils.addClass(newSelectionElement, "selection-list-item-selected");
       this._selectedItem = item;
       
-      var offset = newSelectionElement.getBoundingClientRect().top - this.getBoundingClientRect().top;
-      this.scrollTop = offset;
+      this.scrollToItem(item);
     } else {
       this._selectedItem = null;
       this.scrollTop = 0;
@@ -832,6 +843,20 @@ UIUtils.appendList = function(root, listId, items, enableDND) {
 
     if (this._selectionListener != null) {
       this._selectionListener(this._selectedItem);
+    }
+  }
+  
+  listElement.scrollToItem = function(item) {
+    for (var i = 0; i < this.children.length; i++) {
+      var child = this.children[i];
+      if (child._item == item) {
+        var style = getComputedStyle(child);
+        var height = parseInt(style.height, 10) + parseInt(style.marginTop, 10) + parseInt(style.marginBottom, 10);
+
+        this.scrollTop = height * i;
+        
+        break;
+      }
     }
   }
   
