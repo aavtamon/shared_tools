@@ -595,8 +595,8 @@ select {
   padding: 0px;
   font: inherit;
   
-  overflow-x: hidden;
-  overflow-y: auto;
+/*  overflow-x: hidden;*/
+/*  overflow-y: auto;*/
 }
 .selection-list-item {
   padding: 5px;
