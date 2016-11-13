@@ -938,8 +938,9 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
   var selectorIcon = UIUtils.appendBlock(selector, "Icon");
   UIUtils.addClass(selectorIcon, "multichoicelist-selector-icon");
   
-  var refreshLabel = function() {
+  var refreshLabel = function(notifyChangeListener) {
     var selectedItems = mChoiceList.getSelectedChoices();
+
     var value = "";
     for (var index in selectedItems) {
       if (value != "") {
@@ -963,7 +964,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
 
     if (value != selectorText.innerHTML) {
       selectorText.innerHTML = value;
-      if (mChoiceList._changeListener != null) {
+      if (notifyChangeListener && mChoiceList._changeListener != null) {
         mChoiceList._changeListener(mChoiceList.getValue());
       }
     }
@@ -1014,19 +1015,20 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
       this._choiceElements.push(itemElement);
 
       itemElement.onclick = function() {
-        refreshLabel();
         if (exclusive) {
           UIUtils.setVisible(dropDownListElement, false);
           mChoiceList.selectChoices(this._choice);
+        } else {
+          refreshLabel(true);
         }
       }.bind(itemElement);
     }
     
     // Set default value
     if (defaultText == null && mChoiceList._choices.length > 0) {
-      mChoiceList.selectChoices(mChoiceList._choices[0]);
+      mChoiceList.selectChoices(mChoiceList._choices[0], true);
     } else {
-      mChoiceList.selectChoices([]);
+      mChoiceList.selectChoices([], true);
     }
   }
     
@@ -1066,10 +1068,11 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
     for (var index in this._choiceElements) {
       this._choiceElements[index]._check.setValue(this._choiceElements[index]._choice.data == data);
     }
+
     refreshLabel();
   }
   
-  mChoiceList.selectChoices = function(choices) {
+  mChoiceList.selectChoices = function(choices, automaticSelection) {
     for (var index in this._choiceElements) {
       var found = false;
       for (var i in choices) {
@@ -1082,7 +1085,7 @@ UIUtils.appendMultiOptionList = function(root, listId, choices, exclusive, defau
       this._choiceElements[index]._check.setValue(found);
     }
     
-    refreshLabel();
+    refreshLabel(!automaticSelection);
   }
   
   mChoiceList.clearSelection = function() {
